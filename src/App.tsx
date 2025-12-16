@@ -1,8 +1,8 @@
+import { Routes } from "react-router-dom";
+
 function App() {
   return (
-    <>
-      <h1>The Perfect Mentor</h1>
-    </>
+    <></>
   );
 }
 
