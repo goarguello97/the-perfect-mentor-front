@@ -1,12 +1,9 @@
 import type { Config } from "tailwindcss";
 
 const config = {
-  // En Tailwind CSS v4 ya no es necesario configurar `content` para que funcione.
-  // Usa este archivo para personalizar el tema (colores, fuentes, etc.) o añadir plugins.
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {
-      // Ejemplo: aquí podrás añadir tus propios colores, tipografías, etc.
-    },
+    extend: {},
   },
   plugins: [],
 } satisfies Config;
