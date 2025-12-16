@@ -1,16 +1,21 @@
 @import "tailwindcss";
-
-/* Opcional: estilos globales básicos para la app */
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap");
+* {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background-color: #020617; /* slate-950 */
-  color: #e5e7eb; /* gray-200 */
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Heebo", sans-serif;
+}
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+body {
+  background-color: #bfd732;
 }
