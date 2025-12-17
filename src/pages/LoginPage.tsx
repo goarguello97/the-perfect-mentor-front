@@ -6,9 +6,8 @@ import password from "@assets/password.svg";
 import saly from "@assets/Saly-2.svg";
 import salybug from "@assets/Saly-30.svg";
 import tmpLogo from "@assets/TPM.svg";
-import user from "@assets/user.svg";
 
-const SignUpPage = () => {
+const LoginPage = () => {
   return (
     <>
       <div className="bg-[#BFD732] h-dvh w-screen flex items-center justify-center flex-col md:hidden">
@@ -28,20 +27,14 @@ const SignUpPage = () => {
         <form action="">
           <div className="w-[315px] h-[361px] border-2 border-[#444444] rounded-[40px] mt-[20.58px]! mb-[25px]! flex flex-col items-center justify-center">
             <h1 className="w-[265px] font-extrabold text-[30px] text-[#444444] mb-[19px]!">
-              Registro
+              Iniciar Sesión
             </h1>
             <div className="w-[285px] h-0 border-dashed border border-[#444444] mb-[19px]!"></div>
-            <div className="relative h-[55px] mb-[15px]!">
-              <span className="absolute left-[27px] top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <img src={user} alt="User" />
-              </span>
-              <input
-                type="text"
-                name="username"
-                placeholder="usuario"
-                className="w-[265px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
-              />
-            </div>
+
+            <h2 className="w-[265px] font-normal text-[30px] text-[#444444] mb-[13px]!">
+              Hola!
+            </h2>
+
             <div className="relative h-[55px] mb-[15px]!">
               <span className="absolute left-[27px] top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <img src={email} alt="Email" />
@@ -60,13 +53,19 @@ const SignUpPage = () => {
               <input
                 type="password"
                 name="password"
-                placeholder="password"
+                placeholder="contraseña"
                 className="w-[265px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
               />
             </div>
+            <a
+              href=""
+              className="w-[265px] text-[12px] mt-[15px]! text-[#444444]"
+            >
+              ¿No recuerdas tu contraseña?
+            </a>
           </div>
           <button className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4">
-            Registrarse
+            Iniciar Sesión
           </button>
         </form>
       </div>
@@ -108,20 +107,12 @@ const SignUpPage = () => {
               className="absolute left-1/3 -top-1/4 -translate-x-1/2 -translate-y-1/2"
             />
             <h1 className="w-[323px] h-[59px] font-extrabold text-[40px] text-[#444444] mb-[19px]!">
-              Registro
+              Iniciar Sesión
             </h1>
-            <div className="w-[323px] h-0 border-dashed border border-[#444444] mb-[30px]!"></div>
-            <div className="relative h-[55px] mb-[15px]!">
-              <span className="absolute left-[27px] top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <img src={user} alt="User" />
-              </span>
-              <input
-                type="text"
-                name="username"
-                placeholder="usuario"
-                className="w-[323px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
-              />
-            </div>
+            <div className="w-[323px] h-0 border-dashed border border-[#444444] mb-[20px]!"></div>
+            <h2 className="w-[265px] font-normal text-[30px] text-[#444444] mb-[13px]!">
+              Hola!
+            </h2>
             <div className="relative h-[55px] mb-[15px]!">
               <span className="absolute left-[27px] top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <img src={email} alt="Email" />
@@ -145,8 +136,15 @@ const SignUpPage = () => {
               />
             </div>
 
-            <button className="bg-[#444444] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[30px]!">
-              Registrarse
+            <a
+              href=""
+              className="w-[323px] text-[12px] mt-[15px]! text-[#444444]"
+            >
+              ¿No recuerdas tu contraseña?
+            </a>
+
+            <button className="bg-[#444444] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[20px]!">
+              Iniciar sesión
             </button>
           </form>
         </div>
@@ -155,4 +153,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default LoginPage;
