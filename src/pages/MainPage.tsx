@@ -34,10 +34,10 @@ const MainPage = () => {
         </div>
 
         <button className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px] md:h-[60px] text-white font-bold text-[15px] mb-[10px]! z-10 px-4">
-          Sign Up
+          Registrarse
         </button>
         <button className="border-2 border-[#444444] rounded-full w-full max-w-[315px] h-[55px] md:h-[60px] text-[#444444] font-bold text-[15px] mb-[71px]! px-4">
-          Login
+          Iniciar sesión
         </button>
       </div>
 
@@ -71,10 +71,10 @@ const MainPage = () => {
             />
             <div className="mb-[98px]!">
               <button className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px]  text-white font-bold text-[15px] mb-[10px]! z-10 px-4">
-                Sign Up
+                Registrarse
               </button>
               <button className="border-2 border-[#444444] rounded-full w-full max-w-[315px] h-[55px] text-[#444444] font-bold text-[15px] px-4">
-                Login
+                Iniciar sesión
               </button>
             </div>
           </div>
