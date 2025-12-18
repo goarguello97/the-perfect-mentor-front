@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import SignUpPage from "./pages/SignUpPage";
+import UsersPage from "./pages/UsersPage";
 
 function App() {
   const location = useLocation();
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/users" element={<UsersPage />} />
       </Routes>
     </>
   );
