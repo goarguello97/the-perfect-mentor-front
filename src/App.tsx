@@ -1,15 +1,23 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import SignUpPage from "./pages/SignUpPage";
-import LoginPage from "./pages/LoginPage";
 
 function App() {
+  const location = useLocation();
+  const hideNavbarRoutes = ["/", "/login", "/signup"];
+  const shouldShowBar = !hideNavbarRoutes.includes(location.pathname);
+
   return (
-    <Routes>
-      <Route path="/" element={<MainPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
+    <>
+      {shouldShowBar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </>
   );
 }
 
