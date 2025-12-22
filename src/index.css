@@ -19,3 +19,9 @@ body {
 body {
   background-color: #f5f6f7;
 }
+
+@media (min-width: 768px) {
+  body {
+    background-color: #bfd732;
+  }
+}

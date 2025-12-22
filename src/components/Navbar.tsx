@@ -40,7 +40,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <nav className="hidden md:flex flex-col w-[272px] h-dvh items-center justify-start py-[81px]!">
+      <nav className="hidden md:flex flex-col w-[272px] h-dvh items-center justify-start py-[81px]! bg-[#BFD732] absolute">
         <img src={tmpLogo} alt="The Perfect Mentor" className="w-[200px]" />
         <ul className="mt-[36px]!">
           <div className="flex w-[272px] h-[71px] bg-[#444444] items-center justify-start px-[36px]! relative">
