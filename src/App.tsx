@@ -6,6 +6,7 @@ import ReportsPage from "./pages/ReportsPage";
 import SignUpPage from "./pages/SignUpPage";
 import StadisticsPage from "./pages/StadisticsPage";
 import UsersPage from "./pages/UsersPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/stadistics" element={<StadisticsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </>
   );
