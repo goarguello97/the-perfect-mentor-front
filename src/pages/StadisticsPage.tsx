@@ -295,7 +295,7 @@ const StadisticsPage = () => {
             alt="Saly30"
             className="w-[198px] absolute top-[28px] right-[266px] z-30"
           />
-          <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pt-[40px]! relative z-10">
+          <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pb-[55px]! relative z-10 flex flex-col justify-end">
             <h1 className="text-[50px] font-medium text-[#444444] h-[73px]">
               Estadísticas
             </h1>

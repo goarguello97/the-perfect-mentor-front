@@ -102,7 +102,7 @@ const UsersPage = () => {
 
       <div className="hidden md:flex w-dvw h-dvh items-center justify-end">
         <div className="w-[calc(100dvw-312px)] h-[calc(100dvh-80px)] bg-[#FFFFFF] me-[40px]! rounded-[35px] shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] relative">
-          <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pt-[40px]! relative">
+          <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pb-[55px]! relative flex flex-col justify-end">
             <img
               src={doodle}
               alt="Doodle"
