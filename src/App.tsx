@@ -2,11 +2,11 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
+import ProfilePage from "./pages/ProfilePage";
 import ReportsPage from "./pages/ReportsPage";
 import SignUpPage from "./pages/SignUpPage";
 import StadisticsPage from "./pages/StadisticsPage";
 import UsersPage from "./pages/UsersPage";
-import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const location = useLocation();

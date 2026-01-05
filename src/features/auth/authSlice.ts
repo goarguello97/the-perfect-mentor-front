@@ -11,7 +11,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  rol: string;
+  role: string;
 }
 
 interface Register {
@@ -57,7 +57,7 @@ export const registerUser = createAsyncThunk(
       const user = firebaseUser.user;
 
       const response = await axiosInstance.post(`/users/`, {
-        _id: user.uid,
+        id: user.uid,
         username,
         email,
       });
@@ -92,13 +92,16 @@ export const loginUser = createAsyncThunk(
       const response = await axiosInstance.get(`/users/${user.uid}`);
 
       return {
-        _id: user.uid,
+        id: user.uid,
         username: response.data.username,
         email: response.data.email,
         role: response.data.role,
       };
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data;
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
@@ -136,11 +139,12 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = {
-          id: action.payload._id,
+          id: action.payload.id,
           name: action.payload.username,
           email: action.payload.email,
-          rol: action.payload.role,
+          role: action.payload.role,
         };
+        state.ok = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
