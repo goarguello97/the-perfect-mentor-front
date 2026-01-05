@@ -33,8 +33,6 @@ export const validationRegister = (values: any) => {
     errors.password = "La contraseña debe tener como mínimo 8 caracteres";
   } else if (values.password.length > 30) {
     errors.password = "La contraseña no debe poseer más de 30 caracteres";
-  } else if (values.password !== values.password2) {
-    errors.password = "Las contraseñas no coinciden";
   }
   return errors;
 };

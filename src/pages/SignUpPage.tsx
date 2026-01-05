@@ -7,11 +7,47 @@ import saly from "@assets/Saly-2.svg";
 import salybug from "@assets/Saly-30.svg";
 import tmpLogo from "@assets/TPM.svg";
 import user from "@assets/user.svg";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { REGISTER_INITIAL_VALUES } from "../constants";
+import { registerUser, resetAuthState } from "../features/auth/authSlice";
+import { validationRegister } from "../helpers/validations";
+import useForm from "../hooks/useFormHook";
 
 const SignUpPage = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { error, ok } = useAppSelector((state) => state.auth);
+
+  const { values, handleChange, handleSubmit, errors } = useForm(
+    REGISTER_INITIAL_VALUES,
+    registerUser,
+    validationRegister
+  );
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    if (error) {
+      timer = setTimeout(() => {
+        dispatch(resetAuthState());
+      }, 5000);
+    } else if (ok) {
+      timer = setTimeout(() => {
+        navigate("/login");
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [dispatch, error, ok]);
+
   return (
     <>
-      <div className="bg-[#BFD732] h-dvh w-screen flex items-center justify-center flex-col md:hidden">
+      <div className="bg-[#BFD732] h-dvh w-screen flex items-center justify-center flex-col md:hidden relative">
         <div className="w-[315px] relative">
           <img src={tmpLogo} alt="The Perfect Mentor" className="w-[200.62]" />
           <img
@@ -25,7 +61,7 @@ const SignUpPage = () => {
             className="absolute w-[108px] left-[100px] top-[-55px]"
           />
         </div>
-        <form action="">
+        <form action="" onSubmit={handleSubmit}>
           <div className="w-[315px] h-[361px] border-2 border-[#444444] rounded-[40px] mt-[20.58px]! mb-[25px]! flex flex-col items-center justify-center">
             <h1 className="w-[265px] font-extrabold text-[30px] text-[#444444] mb-[19px]!">
               Registro
@@ -39,7 +75,12 @@ const SignUpPage = () => {
                 type="text"
                 name="username"
                 placeholder="usuario"
+                value={values.username}
+                onChange={handleChange}
                 className="w-[265px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={3}
+                maxLength={30}
+                required
               />
             </div>
             <div className="relative h-[55px] mb-[15px]!">
@@ -50,7 +91,12 @@ const SignUpPage = () => {
                 type="email"
                 name="email"
                 placeholder="email"
+                value={values.email}
+                onChange={handleChange}
                 className="w-[265px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={5}
+                maxLength={50}
+                required
               />
             </div>
             <div className="relative h-[55px]">
@@ -61,14 +107,48 @@ const SignUpPage = () => {
                 type="password"
                 name="password"
                 placeholder="password"
+                value={values.password}
+                onChange={handleChange}
                 className="w-[265px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={8}
+                maxLength={30}
+                required
               />
             </div>
           </div>
-          <button className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4">
+          <button
+            type="submit"
+            className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4"
+          >
             Registrarse
           </button>
         </form>
+        {Object.keys(errors).length !== 0 && (
+          <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
+            <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
+              {Object.keys(errors).length !== 0}
+              {Object.values(errors).map((error: any, i: number) => (
+                <p key={i} className="p-3!">
+                  {error}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
+        {error && (
+          <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
+            <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
+              <p className="p-3!">{error}</p>
+            </div>
+          </div>
+        )}
+        {ok && (
+          <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
+            <div className="w-[315px] h-auto min-h-[100px] bg-[#39B54A] rounded-[40px] flex items-center justify-center text-white">
+              <p className="p-3!">¡Se ha registrado exitosamente!</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="hidden md:flex bg-[#BFD732] h-screen w-screen items-center justify-center">
@@ -99,7 +179,7 @@ const SignUpPage = () => {
             className="w-[245px] absolute rotate-150 left-4/10 top-0 -translate-x-1/2 -translate-y-1/2"
           />
           <form
-            action=""
+            onSubmit={handleSubmit}
             className="w-[50%] h-full border-s-2 border-[#444444] flex items-center justify-center flex-col relative"
           >
             <img
@@ -119,7 +199,12 @@ const SignUpPage = () => {
                 type="text"
                 name="username"
                 placeholder="usuario"
+                value={values.username}
+                onChange={handleChange}
                 className="w-[323px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={3}
+                maxLength={30}
+                required
               />
             </div>
             <div className="relative h-[55px] mb-[15px]!">
@@ -130,7 +215,12 @@ const SignUpPage = () => {
                 type="email"
                 name="email"
                 placeholder="email"
+                value={values.email}
+                onChange={handleChange}
                 className="w-[323px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={5}
+                maxLength={50}
+                required
               />
             </div>
             <div className="relative h-[55px]">
@@ -141,14 +231,48 @@ const SignUpPage = () => {
                 type="password"
                 name="password"
                 placeholder="contraseña"
+                value={values.password}
+                onChange={handleChange}
                 className="w-[323px] h-[55px] border rounded-[40px] font-normal text-[14px] text-[#444444] pl-[53px]!"
+                minLength={8}
+                maxLength={30}
+                required
               />
             </div>
 
-            <button className="bg-[#444444] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[30px]!">
+            <button
+              className="bg-[#444444] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[30px]!"
+              type="submit"
+            >
               Registrarse
             </button>
           </form>
+          {Object.keys(errors).length !== 0 && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
+              <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
+                {Object.keys(errors).length !== 0}
+                {Object.values(errors).map((error: any, i: number) => (
+                  <p key={i} className="p-3!">
+                    {error}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+          {error && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
+              <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
+                <p className="p-3!">{error}</p>
+              </div>
+            </div>
+          )}
+          {ok && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
+              <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#39B54A] p-3! rounded-[40px] text-white">
+                <p className="p-3!">¡Se ha registrado exitosamente!</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
