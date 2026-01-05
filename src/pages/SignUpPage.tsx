@@ -9,6 +9,7 @@ import tmpLogo from "@assets/TPM.svg";
 import user from "@assets/user.svg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { REGISTER_INITIAL_VALUES } from "../constants";
 import { registerUser, resetAuthState } from "../features/auth/authSlice";
@@ -18,7 +19,7 @@ import useForm from "../hooks/useFormHook";
 const SignUpPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, ok } = useAppSelector((state) => state.auth);
+  const { error, ok, isLoading } = useAppSelector((state) => state.auth);
 
   const { values, handleChange, handleSubmit, errors } = useForm(
     REGISTER_INITIAL_VALUES,
@@ -149,6 +150,11 @@ const SignUpPage = () => {
             </div>
           </div>
         )}
+        {isLoading && (
+          <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
+            <BounceLoader color="#39B54A" />
+          </div>
+        )}
       </div>
 
       <div className="hidden md:flex bg-[#BFD732] h-screen w-screen items-center justify-center">
@@ -241,7 +247,7 @@ const SignUpPage = () => {
             </div>
 
             <button
-              className="bg-[#444444] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[30px]!"
+              className="bg-[#444444] hover:bg-[#666666] rounded-full w-full max-w-[323px] h-[55px] md:h-[60px] text-white font-bold text-[15px] z-10 px-4 mt-[30px]! cursor-pointer"
               type="submit"
             >
               Registrarse
@@ -271,6 +277,11 @@ const SignUpPage = () => {
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#39B54A] p-3! rounded-[40px] text-white">
                 <p className="p-3!">¡Se ha registrado exitosamente!</p>
               </div>
+            </div>
+          )}
+          {isLoading && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
+              <BounceLoader color="#39B54A" />
             </div>
           )}
         </div>
