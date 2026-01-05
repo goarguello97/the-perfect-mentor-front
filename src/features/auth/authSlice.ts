@@ -1,14 +1,16 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import axiosInstance from "src/config/axiosInstance";
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "src/firebase/firebase";
+import axiosInstance from "../../config/axiosInstance";
 
 interface User {
   id: string;
   email: string;
   name: string;
+  rol: string;
 }
 
 interface Register {
@@ -37,25 +39,60 @@ const initialState: AuthState = {
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async (data: Register, thunkAPI) => {
+  async ({ username, email, password }: Register, thunkAPI) => {
     try {
-      const response = await axiosInstance.post(`/users/`, data);
+      const firebaseUser = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      if (!firebaseUser.user) {
+        throw new Error("Error al crear el usuario.");
+      }
+
+      const user = firebaseUser.user;
+
+      const response = await axiosInstance.post(`/users/`, {
+        _id: user.uid,
+        username,
+        email,
+      });
       return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async (credentials: Login, thunkAPI) => {
+  async ({ email, password }: Login, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/login", credentials);
+      const firebaseUser = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      if (!firebaseUser.user) {
+        throw new Error("Error al iniciar sesión.");
+      }
+
+      const user = firebaseUser.user;
+
+      const response = await axiosInstance.get(`/users/${user.uid}`);
+
+      return {
+        _id: user.uid,
+        username: response.data.username,
+        email: response.data.email,
+        role: response.data.role,
+      };
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );
@@ -88,14 +125,15 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(
-        loginUser.fulfilled,
-        (state, action: PayloadAction<{ user: User; token: string }>) => {
-          state.isLoading = false;
-          state.user = action.payload.user;
-          state.token = action.payload.token;
-        }
-      )
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = {
+          id: action.payload._id,
+          name: action.payload.username,
+          email: action.payload.email,
+          rol: action.payload.role,
+        };
+      })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
