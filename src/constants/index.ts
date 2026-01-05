@@ -1,10 +1,10 @@
-export const REGISTER_VALIDATIONS = {
+export const REGISTER_INITIAL_VALUES = {
   username: "",
   email: "",
   password: "",
 };
 
-export const LOGIN_VALIDATIONS = {
+export const LOGIN_INITIAL_VALUES = {
   email: "",
   password: "",
 };

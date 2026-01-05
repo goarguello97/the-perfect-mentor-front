@@ -3,8 +3,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "src/firebase/firebase";
 import axiosInstance from "../../config/axiosInstance";
+import { auth } from "../../firebase/firebase";
+import { firebaseErrorSpa } from "./firebaseErrors";
 
 interface User {
   id: string;
@@ -28,6 +29,7 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
+  ok: boolean | null;
 }
 
 const initialState: AuthState = {
@@ -35,6 +37,7 @@ const initialState: AuthState = {
   token: null,
   isLoading: false,
   error: null,
+  ok: null,
 };
 
 export const registerUser = createAsyncThunk(
@@ -58,9 +61,13 @@ export const registerUser = createAsyncThunk(
         username,
         email,
       });
+
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data;
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
@@ -101,6 +108,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    resetAuthState: () => initialState,
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -112,9 +120,9 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state, _) => {
         state.isLoading = false;
-        state.user = action.payload.user;
+        state.ok = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -141,5 +149,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { resetAuthState, logout } = authSlice.actions;
 export default authSlice.reducer;
