@@ -198,6 +198,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isInitializing = false;
+        state.isLoading = false;
         state.error = action.payload as string;
       });
   },
