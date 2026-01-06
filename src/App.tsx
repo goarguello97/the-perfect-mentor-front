@@ -7,6 +7,8 @@ import ReportsPage from "./pages/ReportsPage";
 import SignUpPage from "./pages/SignUpPage";
 import StadisticsPage from "./pages/StadisticsPage";
 import UsersPage from "./pages/UsersPage";
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 function App() {
   const location = useLocation();
@@ -15,12 +17,44 @@ function App() {
 
   return (
     <>
-      {shouldShowBar && <Navbar />}
+      {shouldShowBar && (
+        <PrivateRoute>
+          <Navbar />
+        </PrivateRoute>
+      )}
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/users" element={<UsersPage />} />
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <MainPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUpPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <UsersPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/stadistics" element={<StadisticsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
