@@ -28,6 +28,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  isInitializing: boolean;
   error: string | null;
   ok: boolean | null;
 }
@@ -36,6 +37,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   isLoading: false,
+  isInitializing: true,
   error: null,
   ok: null,
 };
@@ -137,7 +139,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    resetAuthState: () => initialState,
+    resetAuthState: () => ({ ...initialState, isInitializing: false }),
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -188,10 +190,12 @@ const authSlice = createSlice({
         };
         state.token = action.payload.token;
         state.isLoading = false;
+        state.isInitializing = false;
       })
       .addCase(validationUser.rejected, (state) => {
         state.user = null;
         state.token = null;
+        state.isInitializing = false;
       });
   },
 });
