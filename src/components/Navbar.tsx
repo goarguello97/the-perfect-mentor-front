@@ -6,8 +6,12 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { LuChartColumnBig } from "react-icons/lu";
 import { TbUsersPlus } from "react-icons/tb";
 import { Link, useLocation } from "react-router-dom";
+import { useAppDispatch } from "../app/hooks";
+import { logoutUser } from "../features/auth/authSlice";
 
 const Navbar = () => {
+  const dispatch = useAppDispatch();
+
   const location = useLocation();
   return (
     <>
@@ -195,7 +199,7 @@ const Navbar = () => {
           </Link>
         </ul>
         <div className="flex-1 flex items-end">
-          <button className="w-[272px] flex items-center justify-start px-[36px]!">
+          <button onClick={()=>dispatch(logoutUser())} className="w-[272px] h-[71px] flex items-center justify-start px-[36px]! cursor-pointer hover:bg-[#66666690]">
             <BiExit size={25} color="#44444490" className="me-[15px]!" />
             <span className="text-[#44444490] text-[15px] font-medium">
               Salir

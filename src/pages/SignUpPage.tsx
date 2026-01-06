@@ -19,9 +19,9 @@ import useForm from "../hooks/useFormHook";
 const SignUpPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, ok, isLoading } = useAppSelector((state) => state.auth);
+  const { errors, status } = useAppSelector((state) => state.auth);
 
-  const { values, handleChange, handleSubmit, errors } = useForm(
+  const { values, handleChange, handleSubmit, formErrors } = useForm(
     REGISTER_INITIAL_VALUES,
     registerUser,
     validationRegister
@@ -29,11 +29,11 @@ const SignUpPage = () => {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (error) {
+    if (status.register == "failed") {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
       }, 5000);
-    } else if (ok) {
+    } else if (status.register == "succeeded") {
       timer = setTimeout(() => {
         navigate("/login");
       }, 5000);
@@ -44,7 +44,7 @@ const SignUpPage = () => {
         clearTimeout(timer);
       }
     };
-  }, [dispatch, error, ok]);
+  }, [dispatch, errors.register, status.register]);
 
   return (
     <>
@@ -124,11 +124,11 @@ const SignUpPage = () => {
             Registrarse
           </button>
         </form>
-        {Object.keys(errors).length !== 0 && (
+        {Object.keys(formErrors).length !== 0 && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
-              {Object.keys(errors).length !== 0}
-              {Object.values(errors).map((error: any, i: number) => (
+              {Object.keys(formErrors).length !== 0}
+              {Object.values(formErrors).map((error: any, i: number) => (
                 <p key={i} className="p-3!">
                   {error}
                 </p>
@@ -136,21 +136,21 @@ const SignUpPage = () => {
             </div>
           </div>
         )}
-        {error && (
+        {status.register == "failed" && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
-              <p className="p-3!">{error}</p>
+              <p className="p-3!">{errors.register}</p>
             </div>
           </div>
         )}
-        {ok && (
+        {status.register == "succeeded" && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#39B54A] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">¡Se ha registrado exitosamente!</p>
             </div>
           </div>
         )}
-        {isLoading && (
+        {status.register == "loading" && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <BounceLoader color="#39B54A" />
           </div>
@@ -253,11 +253,11 @@ const SignUpPage = () => {
               Registrarse
             </button>
           </form>
-          {Object.keys(errors).length !== 0 && (
+          {Object.keys(formErrors).length !== 0 && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
-                {Object.keys(errors).length !== 0}
-                {Object.values(errors).map((error: any, i: number) => (
+                {Object.keys(formErrors).length !== 0}
+                {Object.values(formErrors).map((error: any, i: number) => (
                   <p key={i} className="p-3!">
                     {error}
                   </p>
@@ -265,21 +265,21 @@ const SignUpPage = () => {
               </div>
             </div>
           )}
-          {error && (
+          {status.register == "failed" && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
-                <p className="p-3!">{error}</p>
+                <p className="p-3!">{errors.register}</p>
               </div>
             </div>
           )}
-          {ok && (
+          {status.register == "succeeded" && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#39B54A] p-3! rounded-[40px] text-white">
                 <p className="p-3!">¡Se ha registrado exitosamente!</p>
               </div>
             </div>
           )}
-          {isLoading && (
+          {status.register == "loading" && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <BounceLoader color="#39B54A" />
             </div>

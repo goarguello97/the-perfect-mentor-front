@@ -3,21 +3,21 @@ import { useAppDispatch } from "../app/hooks";
 
 const useForm = (initialValues: any, submit: any, validations: any) => {
   const [values, setValues] = useState(initialValues);
-  const [errors, setErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isSubmitting) {
-      if (Object.keys(errors).length === 0) {
+      if (Object.keys(formErrors).length === 0) {
         dispatch(submit(values));
       }
       setIsSubmitting(false);
       setTimeout(() => {
-        setErrors({});
+        setFormErrors({});
       }, 5000);
     }
-  }, [errors]);
+  }, [formErrors]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -30,9 +30,9 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validations) {
-      setErrors(validations(values));
+      setFormErrors(validations(values));
     } else {
-      setErrors({});
+      setFormErrors({});
     }
     setIsSubmitting(true);
   };
@@ -41,7 +41,7 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
     handleChange,
     handleSubmit,
     values,
-    errors,
+    formErrors,
     setValues,
   };
 };
