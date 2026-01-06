@@ -107,6 +107,32 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const validationUser = createAsyncThunk(
+  "auth/validateUser",
+  async (token: string, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get("/users/validate", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return {
+        token,
+        user: {
+          id: response.data.id,
+          username: response.data.username,
+          email: response.data.email,
+          role: response.data.role,
+        },
+      };
+    } catch (error: any) {
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data;
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -149,6 +175,23 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(validationUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(validationUser.fulfilled, (state, action) => {
+        state.user = {
+          id: action.payload.user.id,
+          name: action.payload.user.username,
+          email: action.payload.user.email,
+          role: action.payload.user.role,
+        };
+        state.token = action.payload.token;
+        state.isLoading = false;
+      })
+      .addCase(validationUser.rejected, (state) => {
+        state.user = null;
+        state.token = null;
       });
   },
 });
