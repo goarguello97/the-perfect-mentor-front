@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ActivateUserPage from "./pages/ActivateUserPage";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -13,7 +14,9 @@ import PublicRoute from "./routes/PublicRoute";
 function App() {
   const location = useLocation();
   const hideNavbarRoutes = ["/", "/login", "/signup"];
-  const shouldShowBar = !hideNavbarRoutes.includes(location.pathname);
+  const shouldShowBar =
+    !hideNavbarRoutes.includes(location.pathname) &&
+    !location.pathname.startsWith("/activate/");
 
   return (
     <>
@@ -58,6 +61,7 @@ function App() {
         <Route path="/stadistics" element={<StadisticsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/activate/:token" element={<ActivateUserPage />} />
       </Routes>
     </>
   );

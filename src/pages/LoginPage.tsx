@@ -18,9 +18,9 @@ import useHook from "../hooks/useFormHook";
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, ok, isLoading } = useAppSelector((state) => state.auth);
+  const { errors, status } = useAppSelector((state) => state.auth);
 
-  const { values, handleChange, handleSubmit, errors } = useHook(
+  const { values, handleChange, handleSubmit, formErrors } = useHook(
     LOGIN_INITIAL_VALUES,
     loginUser,
     validationLogin
@@ -28,11 +28,11 @@ const LoginPage = () => {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (error) {
+    if (status.login == "failed") {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
       }, 5000);
-    } else if (ok) {
+    } else if (status.login == "succeeded") {
       timer = setTimeout(() => {
         navigate("/users");
       }, 1000);
@@ -43,7 +43,7 @@ const LoginPage = () => {
         clearTimeout(timer);
       }
     };
-  }, [dispatch, error, ok, isLoading]);
+  }, [dispatch, errors.login, status.login]);
 
   return (
     <>
@@ -111,11 +111,11 @@ const LoginPage = () => {
             Iniciar Sesión
           </button>
         </form>
-        {Object.keys(errors).length !== 0 && (
+        {Object.keys(formErrors).length !== 0 && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
-              {Object.keys(errors).length !== 0}
-              {Object.values(errors).map((error: any, i: number) => (
+              {Object.keys(formErrors).length !== 0}
+              {Object.values(formErrors).map((error: any, i: number) => (
                 <p key={i} className="p-3!">
                   {error}
                 </p>
@@ -123,14 +123,14 @@ const LoginPage = () => {
             </div>
           </div>
         )}
-        {error && (
+        {status.login == "failed" && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
-              <p className="p-3!">{error}</p>
+              <p className="p-3!">{errors.login}</p>
             </div>
           </div>
         )}
-        {isLoading && (
+        {status.login == "loading" && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <BounceLoader color="#39B54A" />
           </div>
@@ -224,11 +224,11 @@ const LoginPage = () => {
             </button>
           </form>
 
-          {Object.keys(errors).length !== 0 && (
+          {Object.keys(formErrors).length !== 0 && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
-                {Object.keys(errors).length !== 0}
-                {Object.values(errors).map((error: any, i: number) => (
+                {Object.keys(formErrors).length !== 0}
+                {Object.values(formErrors).map((error: any, i: number) => (
                   <p key={i} className="p-3!">
                     {error}
                   </p>
@@ -236,14 +236,14 @@ const LoginPage = () => {
               </div>
             </div>
           )}
-          {error && (
+          {status.login == "failed" && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
-                <p className="p-3!">{error}</p>
+                <p className="p-3!">{errors.login}</p>
               </div>
             </div>
           )}
-          {isLoading && (
+          {status.login == "loading" && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <BounceLoader color="#39B54A" />
             </div>
