@@ -79,13 +79,13 @@ const MainPage = () => {
             <div className="mb-[98px]!">
               <Link
                 to="/signup"
-                className="bg-[#444444] rounded-full w-full max-w-[315px] h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 px-4 flex items-center justify-center"
+                className="bg-[#444444] hover:bg-[#666666] rounded-full w-full max-w-[315px] h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 px-4 flex items-center justify-center cursor-pointer"
               >
                 Registrarse
               </Link>
               <Link
                 to="/login"
-                className="border-2 border-[#444444] rounded-full w-full max-w-[315px] h-[55px] text-[#444444] font-bold text-[15px] px-4 flex items-center justify-center"
+                className="border-2 border-[#444444] hover:bg-[#44444470]  rounded-full w-full max-w-[315px] h-[55px] text-[#444444] font-bold text-[15px] px-4 flex items-center justify-center cursor-pointer"
               >
                 Iniciar sesión
               </Link>
