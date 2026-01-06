@@ -93,6 +93,8 @@ export const loginUser = createAsyncThunk(
 
       const response = await axiosInstance.get(`/users/${user.uid}`);
 
+      if (!response.data.verify) throw new Error("Debes activar tu usuario.");
+
       return {
         id: user.uid,
         username: response.data.username,
@@ -113,7 +115,7 @@ export const validationUser = createAsyncThunk(
   "auth/validateUser",
   async (token: string, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/users/validate", {
+      const response = await axiosInstance.get("/users/auth/validate", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -192,10 +194,11 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isInitializing = false;
       })
-      .addCase(validationUser.rejected, (state) => {
+      .addCase(validationUser.rejected, (state, action) => {
         state.user = null;
         state.token = null;
         state.isInitializing = false;
+        state.error = action.payload as string;
       });
   },
 });
