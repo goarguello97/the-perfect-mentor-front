@@ -31,6 +31,8 @@ interface AuthStatus {
   register: RequestStatus;
   activation: RequestStatus;
   persistance: RequestStatus;
+  passwordRecovery: RequestStatus;
+  updatePassword: RequestStatus;
 }
 
 interface AuthErrors {
@@ -38,6 +40,8 @@ interface AuthErrors {
   register: string | null;
   activation: string | null;
   persistance: string | null;
+  passwordRecovery: string | null;
+  updatePassword: string | null;
 }
 
 interface AuthState {
@@ -59,12 +63,16 @@ const initialState: AuthState = {
     register: "idle",
     activation: "idle",
     persistance: "idle",
+    passwordRecovery: "idle",
+    updatePassword: "idle",
   },
   errors: {
     login: null,
     register: null,
     activation: null,
     persistance: null,
+    passwordRecovery: null,
+    updatePassword: null,
   },
 };
 
@@ -210,6 +218,58 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+export const recoverPassword = createAsyncThunk(
+  "auth/recoverPassword",
+  async (email: string, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post(
+        "/users/recover-password",
+        email
+      );
+
+      return { message: response.data.message };
+    } catch (error: any) {
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data ||
+        error.message ||
+        "Error al enviar el email de recuperación";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const updatePassword = createAsyncThunk(
+  "auth/updatePassword",
+  async (
+    { token, password }: { token: string; password: string },
+    thunkAPI
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        "/users/update/password",
+        { password },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return {
+        message: response.data.message || "Contraseña actualizada exitosamente",
+      };
+    } catch (error: any) {
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data ||
+        error.message ||
+        "Error al cambiar la contraseña";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -311,6 +371,30 @@ const authSlice = createSlice({
         state.status.register = "idle";
         state.status.activation = "idle";
         state.status.persistance = "idle";
+      })
+      .addCase(recoverPassword.pending, (state) => {
+        state.status.passwordRecovery = "loading";
+        state.errors.passwordRecovery = null;
+      })
+      .addCase(recoverPassword.fulfilled, (state) => {
+        state.status.passwordRecovery = "succeeded";
+        state.errors.passwordRecovery = null;
+      })
+      .addCase(recoverPassword.rejected, (state, action) => {
+        state.status.passwordRecovery = "failed";
+        state.errors.passwordRecovery = action.payload as string;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.status.updatePassword = "loading";
+        state.errors.updatePassword = null;
+      })
+      .addCase(updatePassword.fulfilled, (state) => {
+        state.status.updatePassword = "succeeded";
+        state.errors.updatePassword = null;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.status.updatePassword = "failed";
+        state.errors.updatePassword = action.payload as string;
       });
   },
 });
