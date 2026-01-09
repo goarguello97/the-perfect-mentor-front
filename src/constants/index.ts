@@ -22,3 +22,11 @@ export const SEARCH_PASS_INITIAL_VALUES = {
   search: "",
   verify: false,
 };
+
+export const COMPLETE_USER_DATA_INITIAL_VALUES = {
+  name: "",
+  lastname: "",
+  date: "",
+  country: "",
+  role: "",
+};

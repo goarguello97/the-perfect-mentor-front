@@ -28,7 +28,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (status.login == "failed") {
+    if (status.login == "failed" || status.persistance == "failed") {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
       }, 5000);
@@ -43,7 +43,13 @@ const LoginPage = () => {
         clearTimeout(timer);
       }
     };
-  }, [dispatch, errors.login, status.login]);
+  }, [
+    dispatch,
+    errors.login,
+    status.login,
+    status.persistance,
+    errors.persistance,
+  ]);
 
   return (
     <>
@@ -127,6 +133,13 @@ const LoginPage = () => {
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">{errors.login}</p>
+            </div>
+          </div>
+        )}
+        {status.persistance == "failed" && (
+          <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
+            <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
+              <p className="p-3!">{errors.persistance}</p>
             </div>
           </div>
         )}
@@ -240,6 +253,13 @@ const LoginPage = () => {
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
                 <p className="p-3!">{errors.login}</p>
+              </div>
+            </div>
+          )}
+          {status.persistance == "failed" && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
+              <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
+                <p className="p-3!">{errors.persistance}</p>
               </div>
             </div>
           )}

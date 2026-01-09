@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ActivateUserPage from "./pages/ActivateUserPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import CompleteUserDataPage from "./pages/CompleteUserDataPage";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -15,7 +16,7 @@ import PublicRoute from "./routes/PublicRoute";
 
 function App() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/", "/login", "/signup", "/recover", , ,];
+  const hideNavbarRoutes = ["/", "/login", "/signup", "/recover", "/user-data"];
   const shouldShowBar =
     !hideNavbarRoutes.includes(location.pathname) &&
     !location.pathname.startsWith("/activate/") &&
@@ -66,7 +67,18 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/activate/:token" element={<ActivateUserPage />} />
         <Route path="/recover" element={<RecoverPasswordPage />} />
-        <Route path="/change-password/:token" element={<ChangePasswordPage />} />
+        <Route
+          path="/change-password/:token"
+          element={<ChangePasswordPage />}
+        />
+        <Route
+          path="/user-data"
+          element={
+            <PrivateRoute>
+              <CompleteUserDataPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );
