@@ -16,7 +16,7 @@ const PrivateRoute = ({ children }: { children: ReactNode }) => {
       </div>
     );
 
-  if (!isPersisted) return <Navigate to="/login" replace />;
+  if (!isPersisted) return <Navigate to="/login" state={{ from: location }} replace />;
 
   if (!user?.isComplete) {
     if (location.pathname === "/user-data") {

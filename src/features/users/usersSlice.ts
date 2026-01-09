@@ -25,21 +25,40 @@ interface User {
   updatedAt: string;
 }
 
+interface Info {
+  months: {
+    month: string;
+    newUsers: { mentor: number; mentee: number; total?: number }; // Forzamos a que 'total' exista aquí
+    totalCumulative: { mentor: number; mentee: number; grandTotal: number };
+  }[];
+  summary: {
+    totalUsersAllTime: number;
+    totalNewUsersThisYear: number;
+    breakdownAllTime:{
+      mentors:number
+      mentees:number
+    }
+  };
+}
+
 type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 
 interface UsersErrors {
   users: string | null;
   user: string | null;
+  info: string | null;
 }
 
 interface UsersStatus {
   users: RequestStatus;
   user: RequestStatus;
+  info: RequestStatus;
 }
 
 interface UsersState {
   users: User[] | null;
   user: User | null;
+  info: Info | null;
   page: number | null;
   total: number | null;
   totalPages: number | null;
@@ -50,16 +69,19 @@ interface UsersState {
 const initialState: UsersState = {
   users: null,
   user: null,
+  info: null,
   page: null,
   total: null,
   totalPages: null,
   status: {
     users: "idle",
     user: "idle",
+    info: "idle",
   },
   errors: {
     users: null,
     user: null,
+    info: null,
   },
 };
 
@@ -82,6 +104,34 @@ export const getUsers = createAsyncThunk(
       });
 
       return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data ||
+        error.message ||
+        "Error al obtener los usuarios";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const getUserPerMonth = createAsyncThunk(
+  "users/getUsersPerMonth",
+  async (_, thunkAPI) => {
+    try {
+      const user = auth.currentUser;
+
+      if (!user) throw new Error("Usuario no autenticado");
+
+      const token = user.getIdToken();
+
+      if (!token) {
+        throw new Error("No hay token de autenticación disponible");
+      }
+      const stadistics = await axiosInstance.get("/users/stats/info", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return stadistics.data;
     } catch (error: any) {
       const errorMessage =
         error.response?.data ||
@@ -123,6 +173,17 @@ const usersSlice = createSlice({
       .addCase(getUsers.rejected, (state, action) => {
         state.status.users = "failed";
         state.errors.users = action.payload as string;
+      })
+      .addCase(getUserPerMonth.pending, (state) => {
+        state.status.info = "loading";
+      })
+      .addCase(getUserPerMonth.fulfilled, (state, action) => {
+        state.status.info = "succeeded";
+        state.info = action.payload;
+      })
+      .addCase(getUserPerMonth.rejected, (state, action) => {
+        state.status.info = "failed";
+        state.errors.info = action.payload as string;
       });
   },
 });

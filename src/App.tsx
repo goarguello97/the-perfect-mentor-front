@@ -62,7 +62,14 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/stadistics" element={<StadisticsPage />} />
+        <Route
+          path="/stadistics"
+          element={
+            <PrivateRoute>
+              <StadisticsPage />
+            </PrivateRoute>
+          }
+        />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/activate/:token" element={<ActivateUserPage />} />
