@@ -55,7 +55,13 @@ const LoginPage = () => {
     <>
       <div className="bg-[#BFD732] h-dvh w-screen flex items-center justify-center flex-col md:hidden">
         <div className="w-[315px] relative">
-          <img src={tmpLogo} alt="The Perfect Mentor" className="w-[200.62]" />
+          <Link to="/">
+            <img
+              src={tmpLogo}
+              alt="The Perfect Mentor"
+              className="w-[200.62]"
+            />
+          </Link>
           <img
             src={doodle}
             alt="Doodle"
@@ -181,11 +187,13 @@ const LoginPage = () => {
             onSubmit={handleSubmit}
             className="w-[50%] h-full border-s-2 border-[#444444] flex items-center justify-center flex-col relative"
           >
-            <img
-              src={tmpLogo}
-              alt="The Perfect Mentor"
-              className="absolute left-1/3 -top-1/4 -translate-x-1/2 -translate-y-1/2"
-            />
+            <Link to="/">
+              <img
+                src={tmpLogo}
+                alt="The Perfect Mentor"
+                className="absolute left-1/3 -top-1/4 -translate-x-1/2 -translate-y-1/2"
+              />
+            </Link>
             <h1 className="w-[323px] h-[59px] font-extrabold text-[40px] text-[#444444] mb-[19px]!">
               Iniciar Sesión
             </h1>
