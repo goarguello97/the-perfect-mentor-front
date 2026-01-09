@@ -238,7 +238,7 @@ const UsersPage = () => {
 
                 <span className="text-[14px] font-bold text-[#444444]">
                   {user.fullname ? user.fullname : "N/A"} |
-                  {user.date ? `${calculateAge(user.date)} años` : " N/A"}
+                  {user.date ? ` ${calculateAge(user.date)} años` : " N/A"}
                 </span>
 
                 <p className="h-[51px] text-[14px] text-[#444444] leading-[17px]">
@@ -394,7 +394,7 @@ const UsersPage = () => {
                             {user.fullname ? user.fullname : "N/A"}
                           </div>
                           <div className="text-[14px] font-bold text-[#444444] text-center">
-                            {user.date ? calculateAge("08-11-1997") : "N/A"}
+                            {user.date ? calculateAge(user.date) : "N/A"}
                           </div>
                           <div className="text-[14px] font-bold text-[#444444] text-center">
                             {user.email}

@@ -9,10 +9,27 @@ import { auth } from "../../firebase/firebase";
 import { firebaseErrorSpa } from "./firebaseErrors";
 
 interface User {
+  _id: string;
   id: string;
-  email: string;
   name: string;
-  role: string;
+  lastname: string;
+  fullname: string;
+  username: string;
+  date: string;
+  country: string;
+  email: string;
+  mentor: any[];
+  role: { role: string };
+  md: any[];
+  matchReq: any[];
+  matchSend: any[];
+  match: any[];
+  verify: boolean;
+  isComplete: boolean;
+  skills: string[];
+  recoveryToken: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Register {
@@ -33,6 +50,7 @@ interface AuthStatus {
   persistance: RequestStatus;
   passwordRecovery: RequestStatus;
   updatePassword: RequestStatus;
+  updateUser: RequestStatus;
 }
 
 interface AuthErrors {
@@ -42,6 +60,7 @@ interface AuthErrors {
   persistance: string | null;
   passwordRecovery: string | null;
   updatePassword: string | null;
+  updateUser: string | null;
 }
 
 interface AuthState {
@@ -65,6 +84,7 @@ const initialState: AuthState = {
     persistance: "idle",
     passwordRecovery: "idle",
     updatePassword: "idle",
+    updateUser: "idle",
   },
   errors: {
     login: null,
@@ -73,6 +93,7 @@ const initialState: AuthState = {
     persistance: null,
     passwordRecovery: null,
     updatePassword: null,
+    updateUser: null,
   },
 };
 
@@ -132,12 +153,7 @@ export const loginUser = createAsyncThunk(
         throw new Error("Debes activar tu usuario.");
       }
 
-      return {
-        id: user.uid,
-        username: response.data.username,
-        email: response.data.email,
-        role: response.data.role,
-      };
+      return response.data;
     } catch (error: any) {
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
@@ -159,14 +175,11 @@ export const validationUser = createAsyncThunk(
 
       return {
         token,
-        user: {
-          id: response.data.id,
-          username: response.data.username,
-          email: response.data.email,
-          role: response.data.role,
-        },
+        user: response.data,
       };
     } catch (error: any) {
+      await signOut(auth);
+
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
           firebaseErrorSpa[error.code]) ||
@@ -184,14 +197,7 @@ export const activateUser = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return {
-        user: {
-          id: response.data.id,
-          username: response.data.username,
-          email: response.data.email,
-          role: response.data.role,
-        },
-      };
+      return response.data;
     } catch (error: any) {
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
@@ -270,6 +276,36 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (data, thunkAPI) => {
+    try {
+      const user = auth.currentUser;
+
+      if (!user) throw new Error("Usuario no autenticado");
+
+      const token = user.getIdToken();
+
+      if (!token) {
+        throw new Error("No hay token de autenticación disponible");
+      }
+
+      const response = await axiosInstance.put(`/users/${user.uid}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.code) &&
+          firebaseErrorSpa[error.code]) ||
+        error.response?.data ||
+        error.message;
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -298,12 +334,7 @@ const authSlice = createSlice({
         state.status.login = "loading";
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = {
-          id: action.payload.id,
-          name: action.payload.username,
-          email: action.payload.email,
-          role: action.payload.role,
-        };
+        state.user = action.payload;
         state.status.login = "succeeded";
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -314,12 +345,7 @@ const authSlice = createSlice({
         state.status.persistance = "loading";
       })
       .addCase(validationUser.fulfilled, (state, action) => {
-        state.user = {
-          id: action.payload.user.id,
-          name: action.payload.user.username,
-          email: action.payload.user.email,
-          role: action.payload.user.role,
-        };
+        state.user = action.payload.user;
         state.token = action.payload.token;
         state.status.persistance = "succeeded";
         state.isPersisted = true;
@@ -335,12 +361,7 @@ const authSlice = createSlice({
         state.status.activation = "loading";
       })
       .addCase(activateUser.fulfilled, (state, action) => {
-        state.user = {
-          id: action.payload.user.id,
-          name: action.payload.user.username,
-          email: action.payload.user.email,
-          role: action.payload.user.role,
-        };
+        state.user = action.payload;
         state.status.activation = "succeeded";
       })
       .addCase(activateUser.rejected, (state, action) => {
@@ -395,6 +416,16 @@ const authSlice = createSlice({
       .addCase(updatePassword.rejected, (state, action) => {
         state.status.updatePassword = "failed";
         state.errors.updatePassword = action.payload as string;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.status.updateUser = "loading";
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        (state.status.updateUser = "succeeded"), (state.user = action.payload);
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.status.updateUser = "failed";
+        state.errors.updateUser = action.payload as any;
       });
   },
 });

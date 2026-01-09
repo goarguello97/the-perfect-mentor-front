@@ -1,10 +1,11 @@
 import { useEffect, type ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { BounceLoader } from "react-spinners";
 import { useAppSelector } from "../app/hooks";
 
 const PrivateRoute = ({ children }: { children: ReactNode }) => {
-  const { isPersisted, status } = useAppSelector((state) => state.auth);
+  const { isPersisted, status, user } = useAppSelector((state) => state.auth);
+  const location = useLocation();
 
   useEffect(() => {}, []);
 
@@ -15,7 +16,20 @@ const PrivateRoute = ({ children }: { children: ReactNode }) => {
       </div>
     );
 
-  return isPersisted ? children : <Navigate to="/login" replace />;
+  if (!isPersisted) return <Navigate to="/login" replace />;
+
+  if (!user?.isComplete) {
+    if (location.pathname === "/user-data") {
+      return <>{children}</>;
+    }
+    return <Navigate to="/user-data" replace />;
+  }
+
+  if (user?.isComplete && location.pathname === "/user-data") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
