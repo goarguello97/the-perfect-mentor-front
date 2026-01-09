@@ -24,7 +24,11 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    if (e.target instanceof HTMLInputElement && e.target.type == "checkbox") {
+      setValues({ ...values, [e.target.name]: e.target.checked });
+    } else {
+      setValues({ ...values, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,12 +41,18 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
     setIsSubmitting(true);
   };
 
+  const handleReset = (e: any) => {
+    e.preventDefault();
+    setValues(initialValues);
+  };
+
   return {
     handleChange,
     handleSubmit,
     values,
     formErrors,
     setValues,
+    handleReset,
   };
 };
 

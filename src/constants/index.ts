@@ -16,3 +16,9 @@ export const RECOVER_PASS_INITIAL_VALUES = {
 export const UPDATE_PASS_INITIAL_VALUES = {
   password: "",
 };
+
+export const SEARCH_PASS_INITIAL_VALUES = {
+  age: false,
+  search: "",
+  verify: false,
+};

@@ -86,3 +86,13 @@ export const validationUpdatePassword = (values: any) => {
 
   return errors;
 };
+
+export const validationSearch = (values: any) => {
+  const errors: any = {};
+
+  if (values.search.length > 30) {
+    errors.search = "No debes superar los 30 caracteres";
+  }
+
+  return errors;
+};
