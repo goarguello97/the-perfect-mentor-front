@@ -81,7 +81,7 @@ const initialState: AuthState = {
     login: "idle",
     register: "idle",
     activation: "idle",
-    persistance: "idle",
+    persistance: "loading",
     passwordRecovery: "idle",
     updatePassword: "idle",
     updateUser: "idle",

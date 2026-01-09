@@ -2,8 +2,13 @@ import saly24 from "@assets/Saly-24.svg";
 import saly30 from "@assets/Saly-30.svg";
 import Chart from "chart.js/auto";
 import { useEffect, useRef } from "react";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getUserPerMonth } from "../features/users/usersSlice";
 
 const StadisticsPage = () => {
+  const dispatch = useAppDispatch();
+  const { errors, status, info } = useAppSelector((state) => state.users);
+
   const chartRefMobile = useRef<HTMLCanvasElement>(null);
   const chartRefDesktop = useRef<HTMLCanvasElement>(null);
   const chartInstanceRefMobile = useRef<Chart | null>(null);
@@ -11,7 +16,7 @@ const StadisticsPage = () => {
 
   useEffect(() => {
     // Gráfico para mobile
-    if (chartRefMobile.current) {
+    if (chartRefMobile.current && info) {
       if (chartInstanceRefMobile.current) {
         chartInstanceRefMobile.current.destroy();
       }
@@ -42,7 +47,9 @@ const StadisticsPage = () => {
           datasets: [
             {
               label: "Registros",
-              data: [12, 19, 15, 25, 22, 30, 28, 35, 32, 40, 38, 45],
+              data: info?.months.map((inf) => {
+                return inf.newUsers.total;
+              }) as any,
               backgroundColor: gradient,
               borderWidth: 0,
               maxBarThickness: 30,
@@ -93,7 +100,7 @@ const StadisticsPage = () => {
     }
 
     // Gráfico para desktop
-    if (chartRefDesktop.current) {
+    if (chartRefDesktop.current && info) {
       if (chartInstanceRefDesktop.current) {
         chartInstanceRefDesktop.current.destroy();
       }
@@ -124,7 +131,9 @@ const StadisticsPage = () => {
           datasets: [
             {
               label: "Registros",
-              data: [12, 19, 15, 25, 22, 30, 28, 35, 32, 40, 38, 45],
+              data: info?.months.map((inf) => {
+                return inf.newUsers.total;
+              }) as any,
               backgroundColor: gradient,
               borderWidth: 0,
               maxBarThickness: 30,
@@ -182,7 +191,16 @@ const StadisticsPage = () => {
         chartInstanceRefDesktop.current.destroy();
       }
     };
-  }, []);
+  }, [status.info, dispatch]);
+
+  useEffect(() => {
+    if (!info) {
+      dispatch(getUserPerMonth());
+    }
+    if (info) {
+    }
+  }, [errors.info, status.info, dispatch]);
+
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden">
@@ -217,23 +235,22 @@ const StadisticsPage = () => {
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Mentees:
-                    </span>{" "}
-                    750 <br />
+                    </span>
+                    <span>{info?.summary.breakdownAllTime.mentees}</span>
                   </div>
                   <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Mentores:
-                    </span>{" "}
-                    250
-                    <br />
+                    </span>
+                    <span>{info?.summary.breakdownAllTime.mentors}</span>
                   </div>
                   <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Total:
-                    </span>{" "}
-                    1000
+                    </span>
+                    <span>{info?.summary.totalUsersAllTime}</span>
                   </div>
                 </div>
               </div>
@@ -246,23 +263,22 @@ const StadisticsPage = () => {
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Mentees:
-                    </span>{" "}
-                    7 <br />
+                    </span>
+                    <span>{info?.months[11].totalCumulative.mentee}</span>
                   </div>
                   <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Mentores:
-                    </span>{" "}
-                    10
-                    <br />
+                    </span>
+                    <span>{info?.months[11].totalCumulative.mentor}</span>
                   </div>
                   <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                   <div className="w-full text-[14px] text-[#444444] flex justify-between">
                     <span className="font-bold text-[14px] text-[#444444]">
                       Total:
-                    </span>{" "}
-                    17
+                    </span>
+                    <span>{info?.months[11].totalCumulative.grandTotal}</span>
                   </div>
                 </div>
               </div>
@@ -296,7 +312,7 @@ const StadisticsPage = () => {
             className="w-[198px] absolute top-[28px] right-[266px] z-30"
           />
           <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pt-[30px]! relative z-10 flex flex-col justify-start">
-            <h1 className="text-[50px] font-medium text-[#444444] h-[73px]">
+            <h1 className="text-[50px] font-medium text-[#444444] h-[73px] ">
               Estadísticas
             </h1>
             <p className="text-[20px] text-[#444444]">
@@ -316,23 +332,22 @@ const StadisticsPage = () => {
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Mentees:
-                        </span>{" "}
-                        750 <br />
+                        </span>
+                        <span>{info?.summary.breakdownAllTime.mentees}</span>
                       </div>
                       <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Mentores:
-                        </span>{" "}
-                        250
-                        <br />
+                        </span>
+                        <span>{info?.summary.breakdownAllTime.mentors}</span>
                       </div>
                       <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Total:
-                        </span>{" "}
-                        1000
+                        </span>
+                        <span>{info?.summary.totalUsersAllTime}</span>
                       </div>
                     </div>
                   </div>
@@ -345,23 +360,24 @@ const StadisticsPage = () => {
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Mentees:
-                        </span>{" "}
-                        7 <br />
+                        </span>
+                        <span>{info?.months[11].totalCumulative.mentee}</span>
                       </div>
                       <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Mentores:
-                        </span>{" "}
-                        10
-                        <br />
+                        </span>
+                        <span>{info?.months[11].totalCumulative.mentor}</span>
                       </div>
                       <div className="border-b border-dashed w-full border-[#4444444D]"></div>
                       <div className="w-full text-[14px] text-[#444444] flex justify-between">
                         <span className="font-bold text-[14px] text-[#444444]">
                           Total:
-                        </span>{" "}
-                        17
+                        </span>
+                        <span>
+                          {info?.months[11].totalCumulative.grandTotal}
+                        </span>
                       </div>
                     </div>
                   </div>
