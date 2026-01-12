@@ -3,7 +3,7 @@ import doodle from "@assets/doodle-5 1.svg";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaRegDotCircle } from "react-icons/fa";
 import { GoDot } from "react-icons/go";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoPersonAddOutline, IoSearchOutline } from "react-icons/io5";
 import { TbEditCircle } from "react-icons/tb";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { SEARCH_PASS_INITIAL_VALUES } from "../constants";
@@ -376,7 +376,7 @@ const UsersPage = () => {
                     <div> </div>
                   </div>
 
-                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[6px]">
+                  <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[6px] z-40">
                     {users &&
                       users.map((user, i) => (
                         <div
@@ -433,8 +433,9 @@ const UsersPage = () => {
                             </div>
                           </div>
                           <div>
-                            <button className="w-[35px] h-[35px] mx-auto! flex items-center justify-center rounded-full">
+                            <button className="w-[40px] h-[40px] mx-auto! flex items-center justify-center rounded-full transition-all hover:bg-[#39B54A33] cursor-pointer">
                               <TbEditCircle size={32} color="#444444" />
+                              <IoPersonAddOutline size={32} color="#444444" />
                             </button>
                           </div>
                         </div>
