@@ -310,7 +310,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    resetAuthState: () => ({ ...initialState, isInitializing: false }),
+    resetAuthState: () => ({
+      ...initialState,
+      status: { ...initialState.status, persistance: "idle" as RequestStatus },
+    }),
     logout: (state) => {
       state.user = null;
       state.token = null;
