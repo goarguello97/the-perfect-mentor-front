@@ -428,30 +428,6 @@ const UsersPage = () => {
                     })()}
                   </div>
 
-                  {/* <button
-                    className="absolute right-[15px] bottom-[24px] w-[35px] h-[35px] flex items-center justify-center rounded-full"
-                    disabled={matches.matchesReq?.sentByMe.some(
-                      (m) => m.senderId._id === user._id
-                    )}
-                  >
-                    {matches.matches?.some(
-                      (m) => m._id.toString() === user._id.toString()
-                    ) ? (
-                      <TbEditCircle size={32} color="#444444" />
-                    ) : matches.matchesReq?.sentByMe.some(
-                        (m) =>
-                          m.senderId._id.toString() ===
-                          auth.user?._id.toString()
-                      ) ? (
-                      <IoPersonAddSharp size={32} />
-                    ) : (
-                      <IoPersonAddOutline
-                        size={32}
-                        onClick={() => handleMatch(user._id, user.fullname)}
-                      />
-                    )}
-                  </button> */}
-
                   <span className="text-[14px] font-bold text-[#444444]">
                     {user.fullname ? user.fullname : "N/A"} |
                     {user.date ? ` ${calculateAge(user.date)} años` : " N/A"}
@@ -701,47 +677,6 @@ const UsersPage = () => {
                                     </button>
                                   );
                               })()}
-
-                              {/* <button
-                                className={`w-[40px] h-[40px] mx-auto! flex items-center justify-center rounded-full  ${
-                                  matches.matchesReq?.sentByMe.some(
-                                    (m) => m.senderId._id === auth.user?._id
-                                  )
-                                    ? null
-                                    : "transition-all hover:bg-[#39B54A33] cursor-pointer"
-                                }`}
-                                disabled={matches.matchesReq?.sentByMe.some(
-                                  (m) => m.senderId._id === user._id
-                                )}
-                              >
-                                {matches.matches?.some(
-                                  (m) =>
-                                    m._id.toString() === user._id.toString()
-                                ) ? (
-                                  <TbEditCircle size={32} color="#444444" />
-                                ) : matches.matchesReq?.sentByMe.some(
-                                    (m) =>
-                                      m.senderId._id.toString() ===
-                                      auth.user?._id.toString()
-                                  ) ? (
-                                  matches.matchesReq?.receivedByMe.some(
-                                    (m) =>
-                                      m.senderId._id.toString() ===
-                                      user._id.toString()
-                                  ) ? (
-                                    "Aqui iria boton de rechazar o aceptar????"
-                                  ) : (
-                                    <IoPersonAddSharp size={32} />
-                                  )
-                                ) : (
-                                  <IoPersonAddOutline
-                                    size={32}
-                                    onClick={() =>
-                                      handleMatch(user._id, user.fullname)
-                                    }
-                                  />
-                                )}
-                              </button> */}
                             </div>
                           </div>
                         ))}
