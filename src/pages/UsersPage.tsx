@@ -3,10 +3,23 @@ import doodle from "@assets/doodle-5 1.svg";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaRegDotCircle } from "react-icons/fa";
 import { GoDot } from "react-icons/go";
-import { IoPersonAddOutline, IoSearchOutline } from "react-icons/io5";
+import {
+  IoCheckmark,
+  IoClose,
+  IoPersonAddOutline,
+  IoPersonAddSharp,
+  IoSearchOutline,
+} from "react-icons/io5";
 import { TbEditCircle } from "react-icons/tb";
+import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { SEARCH_PASS_INITIAL_VALUES } from "../constants";
+import {
+  getMatches,
+  getMatchesReq,
+  match,
+  responseMatch,
+} from "../features/match/matchSlice";
 import { getUsers } from "../features/users/usersSlice";
 import { validationSearch } from "../helpers/validations";
 import useDebounce from "../hooks/useDebounceHook";
@@ -19,9 +32,12 @@ interface FilterState {
 }
 const UsersPage = () => {
   const dispatch = useAppDispatch();
-  const { errors, status, users, page, totalPages } = useAppSelector(
+  const { status, users, page, totalPages } = useAppSelector(
     (state) => state.users
   );
+
+  const auth = useAppSelector((state) => state.auth);
+  const matches = useAppSelector((state) => state.matches);
 
   const [mobilePage, setMobilePage] = useState(1);
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -101,6 +117,122 @@ const UsersPage = () => {
     }
   }, [mobilePage, totalPages, status.users, debouncedValues, dispatch]);
 
+  const handleMatch = async (receiverId: string, receiverName: string) => {
+    const isMobile = window.innerWidth < 768;
+    try {
+      await dispatch(match({ senderId: auth.user!._id, receiverId })).unwrap();
+
+      dispatch(getMatches());
+      dispatch(getMatchesReq());
+
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "success",
+        title: `Solicitud enviada a ${receiverName}`,
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    } catch (error) {
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "error",
+        title: "Oops...",
+        text: "No se pudo enviar la solicitud",
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    }
+  };
+
+  const handleAccept = async (id: string) => {
+    const isMobile = window.innerWidth < 768;
+    try {
+      await dispatch(
+        responseMatch({
+          senderId: id,
+          receiverId: auth.user!._id,
+          response: true,
+        })
+      ).unwrap();
+
+      dispatch(getMatches());
+      dispatch(getMatchesReq());
+
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "success",
+        title: `Solicitud aceptada`,
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    } catch (error) {
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "error",
+        title: "Oops...",
+        text: "No se pudo aceptar la solicitud",
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    const isMobile = window.innerWidth < 768;
+    try {
+      await dispatch(
+        responseMatch({
+          senderId: id,
+          receiverId: auth.user!._id,
+          response: false,
+        })
+      ).unwrap();
+
+      dispatch(getMatches());
+      dispatch(getMatchesReq());
+
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "success",
+        title: `Solicitud rechazada`,
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    } catch (error) {
+      Swal.fire({
+        position: isMobile ? "center" : "top-end",
+        icon: "error",
+        title: "Oops...",
+        text: "No se pudo rechazar la solicitud",
+        showConfirmButton: false,
+        timer: 2000,
+        toast: !isMobile,
+      });
+    }
+  };
+
+  const getFriendshipStatus = (user: any) => {
+    const isFriend = matches.matches?.some((m) => m._id === user._id);
+    if (isFriend) return "FRIENDS";
+
+    const sentByMe = matches.matchesReq?.sentByMe.some(
+      (m) => m.receiverId === user._id || m.receiverId?._id == user._id
+    );
+    if (sentByMe) return "SENT_BY_ME";
+
+    const receivedByMe = matches.matchesReq?.receivedByMe.some(
+      (m) => m.senderId === user._id || m.senderId?._id === user._id
+    );
+    if (receivedByMe) return "RECEIVED_BY_ME";
+
+    return "NONE";
+  };
+
   useEffect(() => {
     const queryString = new URLSearchParams(debouncedValues as any).toString();
 
@@ -121,6 +253,19 @@ const UsersPage = () => {
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
   }, [fetchNextPage]);
+
+  useEffect(() => {
+    if (!matches.matches) {
+      dispatch(getMatches());
+      dispatch(getMatchesReq());
+    }
+  }, [
+    matches.status.matches,
+    matches.errors.matches,
+    dispatch,
+    matches.matches,
+    matches.matchesReq,
+  ]);
 
   return (
     <>
@@ -200,59 +345,130 @@ const UsersPage = () => {
           </nav>
 
           {users &&
-            users.map((user, i) => (
-              <div
-                key={user._id ?? i}
-                className={`w-[calc(100%-40px)] h-[102px] mt-[10px]! rounded-[20px] relative flex flex-col items-start justify-center p-[15px]! ${
-                  user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
-                }`}
-              >
+            users
+              .filter((user) => user._id !== auth.user?._id)
+              .map((user, i) => (
                 <div
-                  className={`w-[4px] h-[60px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
-                    user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
-                  }`}
-                ></div>
-
-                <div
-                  className={`w-auto h-[20px] absolute rounded-[40px] right-[15px] top-[15px] px-[10px]! flex items-center ${
-                    user.verify ? "bg-[#39B54A33]" : "bg-[#E6158733]"
+                  key={user._id ?? i}
+                  className={`w-[calc(100%-40px)] h-[102px] mt-[10px]! rounded-[20px] relative flex flex-col items-start justify-center p-[15px]! ${
+                    user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
                   }`}
                 >
-                  <span
-                    className={`text-[12px] leading-[100%] ${
-                      user.verify ? "text-[#39B54A]" : "text-[#E61587]"
-                    }`}
-                  >
-                    {user.verify ? "Verificado" : "No verificado"}
-                  </span>
                   <div
-                    className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
+                    className={`w-[4px] h-[60px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
                       user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
                     }`}
                   ></div>
+
+                  <div
+                    className={`w-auto h-[20px] absolute rounded-[40px] right-[15px] top-[15px] px-[10px]! flex items-center ${
+                      user.verify ? "bg-[#39B54A33]" : "bg-[#E6158733]"
+                    }`}
+                  >
+                    <span
+                      className={`text-[12px] leading-[100%] ${
+                        user.verify ? "text-[#39B54A]" : "text-[#E61587]"
+                      }`}
+                    >
+                      {user.verify ? "Verificado" : "No verificado"}
+                    </span>
+                    <div
+                      className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
+                        user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
+                      }`}
+                    ></div>
+                  </div>
+
+                  <div className="absolute right-[15px] bottom-[24px] w-[35px] h-[35px] flex items-center justify-center rounded-full">
+                    {(() => {
+                      const status = getFriendshipStatus(user);
+                      if (status === "FRIENDS")
+                        return (
+                          <button className="text-gray-500">
+                            <TbEditCircle size={32} />
+                          </button>
+                        );
+
+                      if (status === "SENT_BY_ME")
+                        return (
+                          <button
+                            disabled
+                            className="text-black-500 opacity-50"
+                          >
+                            <IoPersonAddSharp size={32} />
+                          </button>
+                        );
+
+                      if (status === "RECEIVED_BY_ME")
+                        return (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleAccept(user._id)}
+                              className="bg-green-500 text-white p-1 rounded-full hover:bg-green-600"
+                            >
+                              <IoCheckmark size={20} />
+                            </button>
+                            <button
+                              onClick={() => handleReject(user._id)}
+                              className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                            >
+                              <IoClose size={20} />
+                            </button>
+                          </div>
+                        );
+                      if (status === "NONE")
+                        return (
+                          <button
+                            className="transition-all hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"
+                            onClick={() => handleMatch(user._id, user.fullname)}
+                          >
+                            <IoPersonAddOutline size={32} />
+                          </button>
+                        );
+                    })()}
+                  </div>
+
+                  {/* <button
+                    className="absolute right-[15px] bottom-[24px] w-[35px] h-[35px] flex items-center justify-center rounded-full"
+                    disabled={matches.matchesReq?.sentByMe.some(
+                      (m) => m.senderId._id === user._id
+                    )}
+                  >
+                    {matches.matches?.some(
+                      (m) => m._id.toString() === user._id.toString()
+                    ) ? (
+                      <TbEditCircle size={32} color="#444444" />
+                    ) : matches.matchesReq?.sentByMe.some(
+                        (m) =>
+                          m.senderId._id.toString() ===
+                          auth.user?._id.toString()
+                      ) ? (
+                      <IoPersonAddSharp size={32} />
+                    ) : (
+                      <IoPersonAddOutline
+                        size={32}
+                        onClick={() => handleMatch(user._id, user.fullname)}
+                      />
+                    )}
+                  </button> */}
+
+                  <span className="text-[14px] font-bold text-[#444444]">
+                    {user.fullname ? user.fullname : "N/A"} |
+                    {user.date ? ` ${calculateAge(user.date)} años` : " N/A"}
+                  </span>
+
+                  <p className="h-[51px] text-[14px] text-[#444444] leading-[17px]">
+                    <span className="font-bold">Email:</span> {user.email}
+                    <br />
+                    <span className="font-bold">Rol:</span>{" "}
+                    {user.role.role.charAt(0).toUpperCase() +
+                      user.role.role.slice(1).toLowerCase()}
+                    <br />
+                    <span className="font-bold">Fecha ingreso:</span>{" "}
+                    {user.createdAt ? formatDate(user.createdAt) : "N/A"}
+                  </p>
                 </div>
-
-                <button className="absolute right-[15px] bottom-[24px] w-[35px] h-[35px] flex items-center justify-center rounded-full bg-[#FFFFFF]">
-                  <TbEditCircle size={30} color="#44444440" />
-                </button>
-
-                <span className="text-[14px] font-bold text-[#444444]">
-                  {user.fullname ? user.fullname : "N/A"} |
-                  {user.date ? ` ${calculateAge(user.date)} años` : " N/A"}
-                </span>
-
-                <p className="h-[51px] text-[14px] text-[#444444] leading-[17px]">
-                  <span className="font-bold">Email:</span> {user.email}
-                  <br />
-                  <span className="font-bold">Rol:</span>{" "}
-                  {user.role.role.charAt(0).toUpperCase() +
-                    user.role.role.slice(1).toLowerCase()}
-                  <br />
-                  <span className="font-bold">Fecha ingreso:</span>{" "}
-                  {user.createdAt ? formatDate(user.createdAt) : "N/A"}
-                </p>
-              </div>
-            ))}
+              ))}
 
           <div
             ref={loaderRef}
@@ -378,68 +594,157 @@ const UsersPage = () => {
 
                   <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[6px] z-40">
                     {users &&
-                      users.map((user, i) => (
-                        <div
-                          key={i}
-                          className={`h-[60px] grid grid-cols-7 items-center ${
-                            user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
-                          }`}
-                        >
-                          <div className="text-[14px] font-normal text-[#444444] text-center relative">
-                            <div
-                              className={`w-[4px] h-[40px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
-                                user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
-                              }`}
-                            ></div>
-                            {user.fullname ? user.fullname : "N/A"}
-                          </div>
-                          <div className="text-[14px] font-bold text-[#444444] text-center">
-                            {user.date ? calculateAge(user.date) : "N/A"}
-                          </div>
-                          <div className="text-[14px] font-bold text-[#444444] text-center">
-                            {user.email}
-                          </div>
-                          <div className="text-[14px] font-bold text-[#444444] text-center">
-                            {user.role.role.charAt(0).toUpperCase() +
-                              user.role.role.slice(1).toLowerCase()}
-                          </div>
-                          <div className="text-[14px] font-bold text-[#444444] text-center">
-                            {user.createdAt
-                              ? formatDate(user.createdAt)
-                              : "N/A"}
-                          </div>
-                          <div>
-                            <div
-                              className={`w-[100px] h-[20px] flex items-center justify-center rounded-[40px] px-[7px]! mx-auto! ${
-                                user.verify
-                                  ? "bg-[#39B54A33]"
-                                  : "bg-[#E6158733]"
-                              }`}
-                            >
-                              <span
-                                className={`h-[20x] leading-[20px] text-[12px] ${
-                                  user.verify
-                                    ? "text-[#39B54A]"
-                                    : "text-[#E61587]"
-                                }`}
-                              >
-                                {user.verify ? "Verificado" : "No verificado"}
-                              </span>
+                      users
+                        .filter((user) => user._id !== auth.user?._id)
+                        .map((user, i) => (
+                          <div
+                            key={i}
+                            className={`h-[60px] grid grid-cols-7 items-center ${
+                              user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
+                            }`}
+                          >
+                            <div className="text-[14px] font-normal text-[#444444] text-center relative">
                               <div
-                                className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
+                                className={`w-[4px] h-[40px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
                                   user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
                                 }`}
                               ></div>
+                              {user.fullname ? user.fullname : "N/A"}
+                            </div>
+                            <div className="text-[14px] font-bold text-[#444444] text-center">
+                              {user.date ? calculateAge(user.date) : "N/A"}
+                            </div>
+                            <div className="text-[14px] font-bold text-[#444444] text-center">
+                              {user.email}
+                            </div>
+                            <div className="text-[14px] font-bold text-[#444444] text-center">
+                              {user.role.role.charAt(0).toUpperCase() +
+                                user.role.role.slice(1).toLowerCase()}
+                            </div>
+                            <div className="text-[14px] font-bold text-[#444444] text-center">
+                              {user.createdAt
+                                ? formatDate(user.createdAt)
+                                : "N/A"}
+                            </div>
+                            <div>
+                              <div
+                                className={`w-[100px] h-[20px] flex items-center justify-center rounded-[40px] px-[7px]! mx-auto! ${
+                                  user.verify
+                                    ? "bg-[#39B54A33]"
+                                    : "bg-[#E6158733]"
+                                }`}
+                              >
+                                <span
+                                  className={`h-[20x] leading-[20px] text-[12px] ${
+                                    user.verify
+                                      ? "text-[#39B54A]"
+                                      : "text-[#E61587]"
+                                  }`}
+                                >
+                                  {user.verify ? "Verificado" : "No verificado"}
+                                </span>
+                                <div
+                                  className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
+                                    user.verify
+                                      ? "bg-[#39B54A]"
+                                      : "bg-[#E61587]"
+                                  }`}
+                                ></div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-center">
+                              {(() => {
+                                const status = getFriendshipStatus(user);
+                                if (status === "FRIENDS")
+                                  return (
+                                    <button className="text-gray-500">
+                                      <TbEditCircle size={32} />
+                                    </button>
+                                  );
+
+                                if (status === "SENT_BY_ME")
+                                  return (
+                                    <button
+                                      disabled
+                                      className="text-black-500 opacity-50"
+                                    >
+                                      <IoPersonAddSharp size={32} />
+                                    </button>
+                                  );
+
+                                if (status === "RECEIVED_BY_ME")
+                                  return (
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => handleAccept(user._id)}
+                                        className="bg-green-500 text-white p-1 rounded-full hover:bg-green-600"
+                                      >
+                                        <IoCheckmark size={20} />
+                                      </button>
+                                      <button
+                                        onClick={() => handleReject(user._id)}
+                                        className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                                      >
+                                        <IoClose size={20} />
+                                      </button>
+                                    </div>
+                                  );
+                                if (status === "NONE")
+                                  return (
+                                    <button
+                                      className="transition-all hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"
+                                      onClick={() =>
+                                        handleMatch(user._id, user.fullname)
+                                      }
+                                    >
+                                      <IoPersonAddOutline size={32} />
+                                    </button>
+                                  );
+                              })()}
+
+                              {/* <button
+                                className={`w-[40px] h-[40px] mx-auto! flex items-center justify-center rounded-full  ${
+                                  matches.matchesReq?.sentByMe.some(
+                                    (m) => m.senderId._id === auth.user?._id
+                                  )
+                                    ? null
+                                    : "transition-all hover:bg-[#39B54A33] cursor-pointer"
+                                }`}
+                                disabled={matches.matchesReq?.sentByMe.some(
+                                  (m) => m.senderId._id === user._id
+                                )}
+                              >
+                                {matches.matches?.some(
+                                  (m) =>
+                                    m._id.toString() === user._id.toString()
+                                ) ? (
+                                  <TbEditCircle size={32} color="#444444" />
+                                ) : matches.matchesReq?.sentByMe.some(
+                                    (m) =>
+                                      m.senderId._id.toString() ===
+                                      auth.user?._id.toString()
+                                  ) ? (
+                                  matches.matchesReq?.receivedByMe.some(
+                                    (m) =>
+                                      m.senderId._id.toString() ===
+                                      user._id.toString()
+                                  ) ? (
+                                    "Aqui iria boton de rechazar o aceptar????"
+                                  ) : (
+                                    <IoPersonAddSharp size={32} />
+                                  )
+                                ) : (
+                                  <IoPersonAddOutline
+                                    size={32}
+                                    onClick={() =>
+                                      handleMatch(user._id, user.fullname)
+                                    }
+                                  />
+                                )}
+                              </button> */}
                             </div>
                           </div>
-                          <div>
-                            <button className="w-[40px] h-[40px] mx-auto! flex items-center justify-center rounded-full transition-all hover:bg-[#39B54A33] cursor-pointer">
-                              <TbEditCircle size={32} color="#444444" />
-                              <IoPersonAddOutline size={32} color="#444444" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
                   </div>
 
                   <div className="bg-[#F5F6F7] h-[40px] grid grid-cols-7 items-center">
