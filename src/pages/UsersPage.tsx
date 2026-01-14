@@ -633,7 +633,7 @@ const UsersPage = () => {
                                 const status = getFriendshipStatus(user);
                                 if (status === "FRIENDS")
                                   return (
-                                    <button className="text-gray-500">
+                                    <button className="text-black-500 cursor-pointer hover:bg-[#39B54A33] rounded-full">
                                       <TbEditCircle size={32} />
                                     </button>
                                   );
@@ -668,7 +668,7 @@ const UsersPage = () => {
                                 if (status === "NONE")
                                   return (
                                     <button
-                                      className="transition-all hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"
+                                      className="transition-all text-black-500 hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"
                                       onClick={() =>
                                         handleMatch(user._id, user.fullname)
                                       }
