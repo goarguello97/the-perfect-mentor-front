@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import axiosInstance from "../../config/axiosInstance";
 import { auth } from "../../firebase/firebase";
 
@@ -8,20 +12,16 @@ interface User {
 }
 
 interface MatchRequest {
-  sentByMe: [
-    {
-      senderId: { _id: string; fullname: string };
-      receiverId: { _id: string; fullname: string };
-      status: string;
-    }
-  ];
-  receivedByMe: [
-    {
-      senderId: { _id: string; fullname: string };
-      receiverId: { _id: string; fullname: string };
-      status: string;
-    }
-  ];
+  sentByMe: {
+    senderId: { _id: string; fullname: string };
+    receiverId: { _id: string; fullname: string };
+    status: string;
+  }[];
+  receivedByMe: {
+    senderId: { _id: string; fullname: string };
+    receiverId: { _id: string; fullname: string };
+    status: string;
+  }[];
   status: string;
 }
 
@@ -149,6 +149,23 @@ const matchSlice = createSlice({
       ...initialState,
       status: { ...initialState.status, match: "idle" as RequestStatus },
     }),
+    addReceivedRequest: (state, action: PayloadAction<any>) => {
+      state.matchesReq?.receivedByMe.push(action.payload);
+    },
+    moveRequestToFriends: (state, action: PayloadAction<any>) => {
+      const { friendId, friendName } = action.payload;
+
+      if (state.matchesReq) {
+        state.matchesReq.sentByMe = state.matchesReq?.sentByMe.filter(
+          (m) => m.receiverId !== friendId && m.receiverId?._id !== friendId
+        );
+      }
+
+      state.matches?.push({
+        _id: friendId,
+        fullname: friendName,
+      });
+    },
   },
   extraReducers(builder) {
     builder
@@ -197,5 +214,6 @@ const matchSlice = createSlice({
   },
 });
 
-export const { resetMatchStatus } = matchSlice.actions;
+export const { resetMatchStatus, addReceivedRequest, moveRequestToFriends } =
+  matchSlice.actions;
 export default matchSlice.reducer;

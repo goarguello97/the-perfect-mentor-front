@@ -1,5 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useAppSelector } from "./app/hooks";
 import Navbar from "./components/Navbar";
+import { useSocket } from "./hooks/useSocketHook";
 import ActivateUserPage from "./pages/ActivateUserPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import CompleteUserDataPage from "./pages/CompleteUserDataPage";
@@ -21,6 +23,10 @@ function App() {
     !hideNavbarRoutes.includes(location.pathname) &&
     !location.pathname.startsWith("/activate/") &&
     !location.pathname.startsWith("/change-password/");
+
+  const { user } = useAppSelector((state) => state.auth);
+
+  useSocket(user?._id);
 
   return (
     <>
