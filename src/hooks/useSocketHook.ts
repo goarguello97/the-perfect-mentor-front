@@ -1,15 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import Swal from "sweetalert2";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { receiveMessage, setActiveChat } from "../features/chat/chatSlice";
 import {
   addReceivedRequest,
   moveRequestToFriends,
 } from "../features/match/matchSlice";
 
+const NotificationToast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
+});
+
 export const useSocket = (userId: string | undefined) => {
+  const { activeChatUser } = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
   const isMobile = window.innerWidth < 768;
+
+  const activeUserRef = useRef(activeChatUser);
+
+  useEffect(() => {
+    activeUserRef.current = activeChatUser;
+  }, [activeChatUser]);
 
   useEffect(() => {
     if (!userId) return;
@@ -46,8 +66,6 @@ export const useSocket = (userId: string | undefined) => {
           toast.addEventListener("mouseleave", Swal.resumeTimer);
         },
       });
-
-      console.log(`Nueva solicitud de ${data.from}`);
     });
 
     socket.on("REQUEST_ACCEPTED", (data) => {
@@ -64,6 +82,30 @@ export const useSocket = (userId: string | undefined) => {
         timerProgressBar: true,
         iconColor: "#39B54A",
       });
+    });
+
+    socket.on("PRIVATE_MESSAGE", (data) => {
+      dispatch(receiveMessage(data));
+
+      if (activeUserRef.current?._id !== data.senderId) {
+        Swal.fire({
+          title: "Nuevo mensaje",
+          text: `${data.from}: ${data.content}`,
+          icon: "info",
+          toast: true,
+          position: "top-end",
+          timer: 3000,
+          showConfirmButton: false,
+          didOpen: (toast) => {
+            toast.onclick = () => {
+              dispatch(
+                setActiveChat({ _id: data.senderId, fullname: data.from })
+              );
+              Swal.close();
+            };
+          },
+        });
+      }
     });
 
     return () => {
