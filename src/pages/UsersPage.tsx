@@ -13,7 +13,9 @@ import {
 import { TbEditCircle } from "react-icons/tb";
 import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import ChatWindow from "../components/ChatWindow";
 import { SEARCH_PASS_INITIAL_VALUES } from "../constants";
+import { setActiveChat } from "../features/chat/chatSlice";
 import {
   getMatches,
   getMatchesReq,
@@ -633,7 +635,12 @@ const UsersPage = () => {
                                 const status = getFriendshipStatus(user);
                                 if (status === "FRIENDS")
                                   return (
-                                    <button className="text-black-500 cursor-pointer hover:bg-[#39B54A33] rounded-full">
+                                    <button
+                                      className="text-black-500 cursor-pointer hover:bg-[#39B54A33] rounded-full"
+                                      onClick={() =>
+                                        dispatch(setActiveChat(user))
+                                      }
+                                    >
                                       <TbEditCircle size={32} />
                                     </button>
                                   );
@@ -714,6 +721,8 @@ const UsersPage = () => {
           </div>
         </div>
       </div>
+
+      <ChatWindow />
     </>
   );
 };

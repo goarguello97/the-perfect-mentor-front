@@ -30,3 +30,7 @@ export const COMPLETE_USER_DATA_INITIAL_VALUES = {
   country: "",
   role: "",
 };
+
+export const CHAT_INITIAL_VALUES = {
+  content: "",
+};

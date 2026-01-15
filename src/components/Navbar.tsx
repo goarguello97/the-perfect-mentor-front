@@ -15,7 +15,7 @@ const Navbar = () => {
   const location = useLocation();
   return (
     <>
-      <nav className="w-full h-[82px] bg-[#444444] fixed z-20 bottom-0 rounded-t-[40px] flex justify-evenly items-center md:hidden">
+      <nav className="w-full h-[82px] bg-[#444444] fixed z-50 bottom-0 rounded-t-[40px] flex justify-evenly items-center md:hidden">
         <div className="relative w-[72px] h-[82px] flex items-center justify-center">
           <Link to="/users">
             <TbUsersPlus

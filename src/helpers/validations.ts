@@ -147,3 +147,13 @@ export const validationCompleteUserData = (values: any) => {
 
   return errors;
 };
+
+export const chatValidation = (values: any) => {
+  const errors: any = {};
+
+  if (values.content < 1) {
+    errors.content = "El mensaje no puede estar en blanco";
+  }
+
+  return errors;
+};
