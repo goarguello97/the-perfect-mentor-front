@@ -47,10 +47,12 @@ type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 
 interface MdErrors {
   activeChatUser: string | null;
+  messages: string | null;
 }
 
 interface MdStatus {
   activeChatUser: RequestStatus;
+  messages: RequestStatus;
 }
 
 const initialState: ChatState = {
@@ -58,9 +60,11 @@ const initialState: ChatState = {
   messages: [],
   status: {
     activeChatUser: "idle",
+    messages: "idle",
   },
   errors: {
     activeChatUser: null,
+    messages: null,
   },
 };
 
@@ -77,6 +81,27 @@ export const sendMessage = createAsyncThunk(
     } catch (error: any) {
       const errorMessage =
         error.response?.data || error.message || "Error al enviar el mensaje";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const getMessages = createAsyncThunk(
+  "chat/getMessages",
+  async (data: { senderId: string; receiverId: string }, thunkAPI) => {
+    try {
+      const { senderId, receiverId } = data;
+
+      const response = await axiosInstance(
+        `/md?senderId=${senderId}&receiverId=${receiverId}`
+      );
+
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data ||
+        error.message ||
+        "Error al obtener los mensajes antiguos";
       return thunkAPI.rejectWithValue(errorMessage);
     }
   }
@@ -116,12 +141,21 @@ const chatSlice = createSlice({
         state.status.activeChatUser = "loading";
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
-        
         state.status.activeChatUser = "succeeded";
         state.messages.push(action.payload);
       })
       .addCase(sendMessage.rejected, (state) => {
         state.status.activeChatUser = "failed";
+      })
+      .addCase(getMessages.pending, (state) => {
+        state.status.messages = "loading";
+      })
+      .addCase(getMessages.fulfilled, (state, action) => {
+        state.status.messages = "succeeded";
+        state.messages = action.payload
+      })
+      .addCase(getMessages.rejected, (state) => {
+        state.status.messages = "failed";
       }),
 });
 
