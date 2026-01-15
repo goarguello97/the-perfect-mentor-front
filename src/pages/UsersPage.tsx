@@ -13,9 +13,8 @@ import {
 import { TbEditCircle } from "react-icons/tb";
 import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import ChatWindow from "../components/ChatWindow";
 import { SEARCH_PASS_INITIAL_VALUES } from "../constants";
-import { setActiveChat } from "../features/chat/chatSlice";
+import { getMessages, setActiveChat } from "../features/chat/chatSlice";
 import {
   getMatches,
   getMatchesReq,
@@ -308,7 +307,7 @@ const UsersPage = () => {
           </div>
         </header>
         <div className="w-[calc(100%-20px)] mx-[10px] mt-[35px]! flex-1 bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col items-center justify-start pb-[92px]!">
-          <nav className="w-[calc(100%-40px)] h-[50px] bg-[#F5F6F7] rounded-[40px] mt-[10px]! flex items-center justify-between z-40">
+          <nav className="w-[calc(100%-40px)] h-[50px] bg-[#F5F6F7] rounded-[40px] mt-[10px]! flex items-center justify-between z-30">
             <span className="text-[15px] font-bold w-[43px] ms-[20px]! text-[#444444]">
               Filtros
             </span>
@@ -387,7 +386,18 @@ const UsersPage = () => {
                       if (status === "FRIENDS")
                         return (
                           <button className="text-gray-500">
-                            <TbEditCircle size={32} />
+                            <TbEditCircle
+                              size={32}
+                              onClick={() => {
+                                dispatch(
+                                  getMessages({
+                                    senderId: auth.user!._id,
+                                    receiverId: user._id,
+                                  })
+                                );
+                                dispatch(setActiveChat(user));
+                              }}
+                            />
                           </button>
                         );
 
@@ -466,7 +476,7 @@ const UsersPage = () => {
       </div>
 
       <div className="hidden md:flex w-dvw h-dvh items-center justify-end">
-        <div className="w-[calc(100dvw-312px)] h-[calc(100dvh-80px)] bg-[#FFFFFF] me-[40px]! rounded-[35px] shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] relative">
+        <div className="w-[calc(100dvw-312px)] h-[calc(100dvh-80px)] bg-[#FFFFFF] me-[40px]! rounded-[35px] shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] relative z-20">
           <header className="w-full h-[184px] bg-[#F5F6F7] rounded-t-[35px] ps-[65px]! pt-[30px]! relative flex flex-col justify-start">
             <img
               src={doodle}
@@ -479,7 +489,7 @@ const UsersPage = () => {
             </h1>
             <p className="text-[20px] text-[#444444]">Ver todos los usuarios</p>
           </header>
-          <div className="w-[calc(100%-70px)] h-[calc(100%-177px)] bg-[#FFFFFF] shadow-[0px_4px_4px_0px_#44444440] rounded-[40px] absolute left-1/2 bottom-[40px]  -translate-x-1/2">
+          <div className="w-[calc(100%-70px)] h-[calc(100%-177px)] bg-[#FFFFFF] shadow-[0px_4px_4px_0px_#44444440] rounded-[40px] absolute left-1/2 bottom-[40px]  -translate-x-1/2 z-20">
             <img
               src={doodle2}
               alt="Doodle2"
@@ -637,9 +647,15 @@ const UsersPage = () => {
                                   return (
                                     <button
                                       className="text-black-500 cursor-pointer hover:bg-[#39B54A33] rounded-full"
-                                      onClick={() =>
-                                        dispatch(setActiveChat(user))
-                                      }
+                                      onClick={() => {
+                                        dispatch(
+                                          getMessages({
+                                            senderId: auth.user!._id,
+                                            receiverId: user._id,
+                                          })
+                                        );
+                                        dispatch(setActiveChat(user));
+                                      }}
                                     >
                                       <TbEditCircle size={32} />
                                     </button>
@@ -721,8 +737,6 @@ const UsersPage = () => {
           </div>
         </div>
       </div>
-
-      <ChatWindow />
     </>
   );
 };

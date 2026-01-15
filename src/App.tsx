@@ -15,6 +15,7 @@ import StadisticsPage from "./pages/StadisticsPage";
 import UsersPage from "./pages/UsersPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
+import ChatWindow from "./components/ChatWindow";
 
 function App() {
   const location = useLocation();
@@ -35,6 +36,7 @@ function App() {
           <Navbar />
         </PrivateRoute>
       )}
+       <ChatWindow />
       <Routes>
         <Route
           path="/"

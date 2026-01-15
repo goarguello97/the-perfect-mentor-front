@@ -2,23 +2,15 @@ import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { receiveMessage, setActiveChat } from "../features/chat/chatSlice";
+import {
+  getMessages,
+  receiveMessage,
+  setActiveChat,
+} from "../features/chat/chatSlice";
 import {
   addReceivedRequest,
   moveRequestToFriends,
 } from "../features/match/matchSlice";
-
-const NotificationToast = Swal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.addEventListener("mouseenter", Swal.stopTimer);
-    toast.addEventListener("mouseleave", Swal.resumeTimer);
-  },
-});
 
 export const useSocket = (userId: string | undefined) => {
   const { activeChatUser } = useAppSelector((state) => state.chat);
@@ -98,6 +90,12 @@ export const useSocket = (userId: string | undefined) => {
           showConfirmButton: false,
           didOpen: (toast) => {
             toast.onclick = () => {
+              dispatch(
+                getMessages({
+                  senderId: data.receiverId,
+                  receiverId: data.senderId,
+                })
+              );
               dispatch(
                 setActiveChat({ _id: data.senderId, fullname: data.from })
               );
