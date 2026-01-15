@@ -9,8 +9,10 @@ const MessageList = React.memo(() => {
   const { user } = useAppSelector((state) => state.auth);
   const { activeChatUser, messages } = useAppSelector((state) => state.chat);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const messagesEndRefMob = useRef<HTMLDivElement | null>(null);
+  const isInitialLoad = useRef(true);
+  const isInitialMobLoad = useRef(true);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerMobRef = useRef<HTMLDivElement | null>(null);
 
   const formatMessageDate = (dateIso: string): string => {
     const messageDate = new Date(dateIso);
@@ -40,29 +42,47 @@ const MessageList = React.memo(() => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({
+    const scrollContainer = chatContainerMobRef.current;
+    if (scrollContainer && messages.length > 0) {
+      if (isInitialMobLoad.current) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: "auto",
+        });
+        isInitialMobLoad.current = false;
+      } else {
+        scrollContainer?.scrollTo({
+          top: scrollContainer.scrollHeight,
           behavior: "smooth",
-          block: "end",
         });
       }
-    }, 10);
+    }
 
-    return () => clearTimeout(timer);
+    return () => {
+      isInitialMobLoad.current = true;
+    };
   }, [messages]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (messagesEndRefMob.current) {
-        messagesEndRefMob.current.scrollIntoView({
+    const scrollContainer = chatContainerRef.current;
+    if (scrollContainer && messages.length > 0) {
+      if (isInitialLoad.current) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: "auto",
+        });
+        isInitialLoad.current = false;
+      } else {
+        scrollContainer?.scrollTo({
+          top: scrollContainer.scrollHeight,
           behavior: "smooth",
-          block: "end",
         });
       }
-    }, 10);
+    }
 
-    return () => clearTimeout(timer);
+    return () => {
+      isInitialLoad.current = true;
+    };
   }, [messages]);
 
   if (!activeChatUser) return null;
@@ -77,7 +97,10 @@ const MessageList = React.memo(() => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2! flex flex-col">
+        <div
+          ref={chatContainerMobRef}
+          className="flex-1 overflow-y-auto p-2! flex flex-col"
+        >
           {messages.map((m: any, i: number) => {
             const nextMessage = messages[i + 1];
 
@@ -114,7 +137,6 @@ const MessageList = React.memo(() => {
               </div>
             );
           })}
-          <div ref={messagesEndRefMob} />
         </div>
       </div>
 
@@ -129,7 +151,10 @@ const MessageList = React.memo(() => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2! flex flex-col">
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto p-2! flex flex-col"
+        >
           {messages.map((m: any, i: number) => {
             const nextMessage = messages[i + 1];
 
@@ -166,7 +191,6 @@ const MessageList = React.memo(() => {
               </div>
             );
           })}
-          <div ref={messagesEndRef} />
         </div>
       </div>
     </>
