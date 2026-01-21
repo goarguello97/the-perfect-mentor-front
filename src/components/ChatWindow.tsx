@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoClose, IoSendOutline } from "react-icons/io5";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { CHAT_INITIAL_VALUES } from "../constants";
-import { closeChat, sendMessage } from "../features/chat/chatSlice";
+import { closeChat, getUserMessages, sendMessage } from "../features/chat/chatSlice";
 
 const MessageList = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -140,11 +140,16 @@ const MessageList = React.memo(() => {
         </div>
       </div>
 
-      <div className="hidden md:flex fixed bottom-[20px] right-10 w-80 h-96 bg-white rounded-t-[20px] flex-col pb-[50px]! shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-40">
+      <div className="hidden md:flex fixed bottom-[20px] right-10 w-80 h-96 bg-white rounded-t-[20px] flex-col pb-[50px]! shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-50">
         <div className="bg-[#444444] p-3! text-[#BFD732] flex justify-between rounded-t-[20px]">
           <span>{activeChatUser.fullname}</span>
           <button
-            onClick={() => dispatch(closeChat())}
+            onClick={() => {
+              dispatch(closeChat()) 
+              if (user) {
+                dispatch(getUserMessages({ userId: user?._id }))
+              }
+          }}
             className="cursor-pointer hover:bg-[#BFD73220] rounded-full transition-all"
           >
             <IoClose size={25} />
@@ -246,7 +251,7 @@ const ChatInput = () => {
       </form>
       <form
         onSubmit={handleSubmit}
-        className="p-2! border-t border-[#444444] hidden md:flex fixed bottom-0 right-10 w-80 h-[50px] bg-white z-40"
+        className="p-2! border-t border-[#444444] hidden md:flex fixed bottom-0 right-10 w-80 h-[50px] bg-white z-50"
       >
         <input
           value={values.content}
