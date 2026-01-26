@@ -1,9 +1,9 @@
 export const validationRegister = (values: any) => {
   const errors: any = {};
-  let passwordRegex = new RegExp(
+  const passwordRegex = new RegExp(
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
   );
-  let emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  const emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   if (!values.username) {
     errors.username = "El nombre de usuario es requerido";
   } else if (values.username.length < 3) {
@@ -39,7 +39,7 @@ export const validationRegister = (values: any) => {
 
 export const validationLogin = (values: any) => {
   const errors: any = {};
-  let emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  const emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   if (!values.email) {
     errors.email = "El email es requerido";
   }
@@ -55,7 +55,7 @@ export const validationLogin = (values: any) => {
 
 export const validationRecoverPassword = (values: any) => {
   const errors: any = {};
-  let emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  const emailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   if (!values.email) {
     errors.email = "El email es requerido";
   }
@@ -69,7 +69,7 @@ export const validationRecoverPassword = (values: any) => {
 export const validationUpdatePassword = (values: any) => {
   const errors: any = {};
 
-  let passwordRegex = new RegExp(
+  const passwordRegex = new RegExp(
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
   );
 
@@ -157,3 +157,17 @@ export const chatValidation = (values: any) => {
 
   return errors;
 };
+
+export const reportValidation = (values: any) => {
+  const errors: any = {};
+
+  if (values.content < 1) {
+    errors.content = "El mensaje no puede estar en blanco";
+  }
+
+  if (!values.receiverId) {
+    errors.receiverUser = "Debes elegir un destinatario";
+  }
+
+  return errors;
+}

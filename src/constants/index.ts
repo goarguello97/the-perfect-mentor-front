@@ -34,3 +34,9 @@ export const COMPLETE_USER_DATA_INITIAL_VALUES = {
 export const CHAT_INITIAL_VALUES = {
   content: "",
 };
+
+export const REPORT_INITIAL_VALUES = {
+  content: "",
+  receiverId: "",
+  issue:""
+}
