@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
 import chatReducer from "../features/chat/chatSlice";
 import matchesReducer from "../features/match/matchSlice";
+import reportReducer from "../features/reports/reportSlice";
 import rolesReducer from "../features/roles/rolesSlice";
 import usersReducer from "../features/users/usersSlice";
 
@@ -12,6 +13,7 @@ export const store = configureStore({
     roles: rolesReducer,
     matches: matchesReducer,
     chat: chatReducer,
+    report: reportReducer
   },
 });
 
