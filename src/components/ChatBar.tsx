@@ -44,7 +44,10 @@ const ChatList = ({setView, chats, status, user, count}:any) => {
         {chats?.map((chat, i) => (
           <div key={i} className="flex flex-col items-center justify-center bg-[#F5F6F7] rounded-[10px] mx-[5px]! mb-[5px]! cursor-pointer shadow-[0px_4px_4px_0px_#4444444D]"
             onClick={() => 
+            {
               handleOpenChat(chat.contact)
+              //getUserMessages({userId: user._id})
+            }
             }>
             <div className="w-full bg-[#C7EACD] rounded-t-[10px] mx-[5px]! mb-[2px]! px-[5px]!">
               {chat.contact.fullname}
