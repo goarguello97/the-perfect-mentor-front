@@ -3,9 +3,11 @@ import { io } from "socket.io-client";
 import Swal from "sweetalert2";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
+  addMessage,
   getMessages,
+  getUserMessages,
   receiveMessage,
-  setActiveChat,
+  setActiveChat
 } from "../features/chat/chatSlice";
 import {
   addReceivedRequest,
@@ -77,9 +79,12 @@ export const useSocket = (userId: string | undefined) => {
     });
 
     socket.on("PRIVATE_MESSAGE", (data) => {
+
       dispatch(receiveMessage(data));
 
-      if (activeUserRef.current?._id !== data.senderId) {
+      if (activeUserRef.current?._id !== data.senderId) {  
+        dispatch(getUserMessages({userId}))
+      //dispatch(incrementUnreadCount(data.senderId))
         Swal.fire({
           title: "Nuevo mensaje",
           text: `${data.from}: ${data.content}`,
@@ -103,6 +108,8 @@ export const useSocket = (userId: string | undefined) => {
             };
           },
         });
+      } else {
+        dispatch(addMessage(data))
       }
     });
 
@@ -110,4 +117,6 @@ export const useSocket = (userId: string | undefined) => {
       socket.disconnect();
     };
   }, [userId]);
+
+  
 };

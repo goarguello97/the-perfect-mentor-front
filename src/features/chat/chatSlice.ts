@@ -38,7 +38,9 @@ interface Message {
 
 interface ChatState {
   activeChatUser: User | null;
-  messages: any[];
+  messages: Message[];
+  chats: any[]
+  unreadMessages: number;
   errors: MdErrors;
   status: MdStatus;
 }
@@ -48,23 +50,29 @@ type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
 interface MdErrors {
   activeChatUser: string | null;
   messages: string | null;
+  chats: string | null;
 }
 
 interface MdStatus {
   activeChatUser: RequestStatus;
   messages: RequestStatus;
+  chats: RequestStatus
 }
 
 const initialState: ChatState = {
   activeChatUser: null,
   messages: [],
+  chats: [],
+  unreadMessages: 0,
   status: {
     activeChatUser: "idle",
     messages: "idle",
+    chats: "idle"
   },
   errors: {
     activeChatUser: null,
     messages: null,
+    chats: null
   },
 };
 
@@ -85,6 +93,23 @@ export const sendMessage = createAsyncThunk(
     }
   }
 );
+
+export const getUserMessages = createAsyncThunk("chat/getUserMessages", async (data:{userId:string}, thunkAPI) => {
+  try {
+    
+    const { userId } = data;
+
+    const response = await axiosInstance.get(`/md/${userId}`)
+    return response.data    
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data ||
+      error.message ||
+      "Error al obtener los mensajes antiguos";
+    return thunkAPI.rejectWithValue(errorMessage);
+    
+  }
+})
 
 export const getMessages = createAsyncThunk(
   "chat/getMessages",
@@ -134,6 +159,16 @@ const chatSlice = createSlice({
         state.messages.push(msg);
       }
     },
+    // incrementUnreadCount: (state, action) => {
+    //   if (state.unreadMessages[action.payload]) {
+    //     state.unreadMessages[action.payload]++;
+    //   } else {
+    //     state.unreadMessages[action.payload] = 1;
+    //   }
+    // },
+    // resetUnreadCount: (state, action) => {
+    //   state.unreadMessages[action.payload] = 0;
+    // }
   },
   extraReducers: (builder) =>
     builder
@@ -147,6 +182,17 @@ const chatSlice = createSlice({
       .addCase(sendMessage.rejected, (state) => {
         state.status.activeChatUser = "failed";
       })
+      .addCase(getUserMessages.pending, (state) => {
+        state.status.chats = "loading";
+      })
+      .addCase(getUserMessages.fulfilled, (state, action) => {
+        state.status.chats = "succeeded";
+        state.chats = action.payload
+        state.unreadMessages = action.payload.reduce((acc, chat) => acc + chat.unreadCount, 0)
+      })
+      .addCase(getUserMessages.rejected, (state) => {
+        state.status.chats = "failed";
+      })
       .addCase(getMessages.pending, (state) => {
         state.status.messages = "loading";
       })
@@ -159,7 +205,7 @@ const chatSlice = createSlice({
       }),
 });
 
-export const { addMessage, closeChat, setActiveChat, receiveMessage } =
+export const { addMessage, closeChat, setActiveChat, receiveMessage, incrementUnreadCount, resetUnreadCount } =
   chatSlice.actions;
 
 export default chatSlice.reducer;

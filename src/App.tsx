@@ -1,5 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useAppSelector } from "./app/hooks";
+import ChatBar from "./components/ChatBar";
+import ChatWindow from "./components/ChatWindow";
 import Navbar from "./components/Navbar";
 import { useSocket } from "./hooks/useSocketHook";
 import ActivateUserPage from "./pages/ActivateUserPage";
@@ -15,7 +17,6 @@ import StadisticsPage from "./pages/StadisticsPage";
 import UsersPage from "./pages/UsersPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
-import ChatWindow from "./components/ChatWindow";
 
 function App() {
   const location = useLocation();
@@ -26,8 +27,9 @@ function App() {
     !location.pathname.startsWith("/change-password/");
 
   const { user } = useAppSelector((state) => state.auth);
-
+  
   useSocket(user?._id);
+
 
   return (
     <>
@@ -36,7 +38,8 @@ function App() {
           <Navbar />
         </PrivateRoute>
       )}
-       <ChatWindow />
+      <ChatWindow />
+      <ChatBar />
       <Routes>
         <Route
           path="/"
