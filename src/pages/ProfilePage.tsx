@@ -1,10 +1,10 @@
-import avatar from "@assets/avatar.svg";
-import doodle from "@assets/doodle-4 1.svg";
-import doodle2 from "@assets/doodle-5 1.svg";
-import maskGroup from "@assets/Mask group.svg";
-import saly from "@assets/Saly-30.svg";
-import { FaEyeSlash } from "react-icons/fa";
-import { TbEditCircle } from "react-icons/tb";
+import avatar from '@assets/avatar.svg';
+import doodle from '@assets/doodle-4 1.svg';
+import doodle2 from '@assets/doodle-5 1.svg';
+import maskGroup from '@assets/Mask group.svg';
+import saly from '@assets/Saly-30.svg';
+import { FaEyeSlash } from 'react-icons/fa';
+import { TbEditCircle } from 'react-icons/tb';
 
 const ProfilePage = () => {
   return (
@@ -123,7 +123,7 @@ const ProfilePage = () => {
             </div>
 
             <button className="w-auto h-[35px] flex items-center justify-center mt-[128px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold">
-              Editar{" "}
+              Editar{' '}
               <TbEditCircle size={18} color="#44444490" className="ms-[9px]!" />
             </button>
 

@@ -1,30 +1,34 @@
-import doodle2 from "@assets/doodle-4 1.svg";
-import doodle from "@assets/doodle-5 1.svg";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { FaRegDotCircle } from "react-icons/fa";
-import { GoDot } from "react-icons/go";
+import doodle2 from '@assets/doodle-4 1.svg';
+import doodle from '@assets/doodle-5 1.svg';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FaRegDotCircle } from 'react-icons/fa';
+import { GoDot } from 'react-icons/go';
 import {
   IoCheckmark,
   IoClose,
   IoPersonAddOutline,
   IoPersonAddSharp,
   IoSearchOutline,
-} from "react-icons/io5";
-import { TbEditCircle } from "react-icons/tb";
-import Swal from "sweetalert2";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { SEARCH_PASS_INITIAL_VALUES } from "../constants";
-import { getMessages, resetUnreadCount, setActiveChat } from "../features/chat/chatSlice";
+} from 'react-icons/io5';
+import { TbEditCircle } from 'react-icons/tb';
+import Swal from 'sweetalert2';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { SEARCH_PASS_INITIAL_VALUES } from '../constants';
+import {
+  getMessages,
+  resetUnreadCount,
+  setActiveChat,
+} from '../features/chat/chatSlice';
 import {
   getMatches,
   getMatchesReq,
   match,
   responseMatch,
-} from "../features/match/matchSlice";
-import { getUsers } from "../features/users/usersSlice";
-import { validationSearch } from "../helpers/validations";
-import useDebounce from "../hooks/useDebounceHook";
-import useForm from "../hooks/useFormHook";
+} from '../features/match/matchSlice';
+import { getUsers } from '../features/users/usersSlice';
+import { validationSearch } from '../helpers/validations';
+import useDebounce from '../hooks/useDebounceHook';
+import useForm from '../hooks/useFormHook';
 interface FilterState {
   search: string;
   verify: boolean;
@@ -34,7 +38,7 @@ interface FilterState {
 const UsersPage = () => {
   const dispatch = useAppDispatch();
   const { status, users, page, totalPages } = useAppSelector(
-    (state) => state.users
+    (state) => state.users,
   );
 
   const auth = useAppSelector((state) => state.auth);
@@ -46,7 +50,7 @@ const UsersPage = () => {
   const { handleChange, handleReset, values } = useForm(
     SEARCH_PASS_INITIAL_VALUES,
     getUsers,
-    validationSearch
+    validationSearch,
   );
 
   const debouncedValues = useDebounce<FilterState>(values, 500);
@@ -70,21 +74,21 @@ const UsersPage = () => {
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const months = [
-      "Ene.",
-      "Feb.",
-      "Mar.",
-      "Abr.",
-      "May.",
-      "Jun.",
-      "Jul.",
-      "Ago.",
-      "Sep.",
-      "Oct.",
-      "Nov.",
-      "Dic.",
+      'Ene.',
+      'Feb.',
+      'Mar.',
+      'Abr.',
+      'May.',
+      'Jun.',
+      'Jul.',
+      'Ago.',
+      'Sep.',
+      'Oct.',
+      'Nov.',
+      'Dic.',
     ];
 
-    const day = date.getDate().toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, '0');
     const month = months[date.getMonth()];
     const year = date.getFullYear();
 
@@ -103,15 +107,15 @@ const UsersPage = () => {
   };
 
   const fetchNextPage = useCallback(() => {
-    if (mobilePage < (totalPages || 0) && status.users !== "loading") {
+    if (mobilePage < (totalPages || 0) && status.users !== 'loading') {
       const nextPage = mobilePage + 1;
       setMobilePage(nextPage);
 
       const params = new URLSearchParams({
         ...(debouncedValues as any),
         page: nextPage.toString(),
-        limit: "6",
-        isScrolling: "true",
+        limit: '6',
+        isScrolling: 'true',
       }).toString();
 
       dispatch(getUsers(params));
@@ -127,8 +131,8 @@ const UsersPage = () => {
       dispatch(getMatchesReq());
 
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "success",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'success',
         title: `Solicitud enviada a ${receiverName}`,
         showConfirmButton: false,
         timer: 2000,
@@ -136,10 +140,10 @@ const UsersPage = () => {
       });
     } catch (error) {
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "error",
-        title: "Oops...",
-        text: "No se pudo enviar la solicitud",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'error',
+        title: 'Oops...',
+        text: 'No se pudo enviar la solicitud',
         showConfirmButton: false,
         timer: 2000,
         toast: !isMobile,
@@ -155,15 +159,15 @@ const UsersPage = () => {
           senderId: id,
           receiverId: auth.user!._id,
           response: true,
-        })
+        }),
       ).unwrap();
 
       dispatch(getMatches());
       dispatch(getMatchesReq());
 
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "success",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'success',
         title: `Solicitud aceptada`,
         showConfirmButton: false,
         timer: 2000,
@@ -171,10 +175,10 @@ const UsersPage = () => {
       });
     } catch (error) {
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "error",
-        title: "Oops...",
-        text: "No se pudo aceptar la solicitud",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'error',
+        title: 'Oops...',
+        text: 'No se pudo aceptar la solicitud',
         showConfirmButton: false,
         timer: 2000,
         toast: !isMobile,
@@ -190,15 +194,15 @@ const UsersPage = () => {
           senderId: id,
           receiverId: auth.user!._id,
           response: false,
-        })
+        }),
       ).unwrap();
 
       dispatch(getMatches());
       dispatch(getMatchesReq());
 
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "success",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'success',
         title: `Solicitud rechazada`,
         showConfirmButton: false,
         timer: 2000,
@@ -206,10 +210,10 @@ const UsersPage = () => {
       });
     } catch (error) {
       Swal.fire({
-        position: isMobile ? "center" : "top-end",
-        icon: "error",
-        title: "Oops...",
-        text: "No se pudo rechazar la solicitud",
+        position: isMobile ? 'center' : 'top-end',
+        icon: 'error',
+        title: 'Oops...',
+        text: 'No se pudo rechazar la solicitud',
         showConfirmButton: false,
         timer: 2000,
         toast: !isMobile,
@@ -219,19 +223,19 @@ const UsersPage = () => {
 
   const getFriendshipStatus = (user: any) => {
     const isFriend = matches.matches?.some((m) => m._id === user._id);
-    if (isFriend) return "FRIENDS";
+    if (isFriend) return 'FRIENDS';
 
     const sentByMe = matches.matchesReq?.sentByMe.some(
-      (m) => m.receiverId === user._id || m.receiverId?._id == user._id
+      (m) => m.receiverId === user._id || m.receiverId?._id == user._id,
     );
-    if (sentByMe) return "SENT_BY_ME";
+    if (sentByMe) return 'SENT_BY_ME';
 
     const receivedByMe = matches.matchesReq?.receivedByMe.some(
-      (m) => m.senderId === user._id || m.senderId?._id === user._id
+      (m) => m.senderId === user._id || m.senderId?._id === user._id,
     );
-    if (receivedByMe) return "RECEIVED_BY_ME";
+    if (receivedByMe) return 'RECEIVED_BY_ME';
 
-    return "NONE";
+    return 'NONE';
   };
 
   useEffect(() => {
@@ -248,7 +252,7 @@ const UsersPage = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (loaderRef.current) observer.observe(loaderRef.current);
@@ -352,30 +356,30 @@ const UsersPage = () => {
                 <div
                   key={user._id ?? i}
                   className={`w-[calc(100%-40px)] h-[102px] mt-[10px]! rounded-[20px] relative flex flex-col items-start justify-center p-[15px]! ${
-                    user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
+                    user.verify ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'
                   }`}
                 >
                   <div
                     className={`w-[4px] h-[60px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
-                      user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
+                      user.verify ? 'bg-[#39B54A]' : 'bg-[#E61587]'
                     }`}
                   ></div>
 
                   <div
                     className={`w-auto h-[20px] absolute rounded-[40px] right-[15px] top-[15px] px-[10px]! flex items-center ${
-                      user.verify ? "bg-[#39B54A33]" : "bg-[#E6158733]"
+                      user.verify ? 'bg-[#39B54A33]' : 'bg-[#E6158733]'
                     }`}
                   >
                     <span
                       className={`text-[12px] leading-[100%] ${
-                        user.verify ? "text-[#39B54A]" : "text-[#E61587]"
+                        user.verify ? 'text-[#39B54A]' : 'text-[#E61587]'
                       }`}
                     >
-                      {user.verify ? "Verificado" : "No verificado"}
+                      {user.verify ? 'Verificado' : 'No verificado'}
                     </span>
                     <div
                       className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
-                        user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
+                        user.verify ? 'bg-[#39B54A]' : 'bg-[#E61587]'
                       }`}
                     ></div>
                   </div>
@@ -383,7 +387,7 @@ const UsersPage = () => {
                   <div className="absolute right-[15px] bottom-[24px] w-[35px] h-[35px] flex items-center justify-center rounded-full">
                     {(() => {
                       const status = getFriendshipStatus(user);
-                      if (status === "FRIENDS")
+                      if (status === 'FRIENDS')
                         return (
                           <button className="text-gray-500">
                             <TbEditCircle
@@ -393,7 +397,7 @@ const UsersPage = () => {
                                   getMessages({
                                     senderId: auth.user!._id,
                                     receiverId: user._id,
-                                  })
+                                  }),
                                 );
                                 dispatch(setActiveChat(user));
                               }}
@@ -401,7 +405,7 @@ const UsersPage = () => {
                           </button>
                         );
 
-                      if (status === "SENT_BY_ME")
+                      if (status === 'SENT_BY_ME')
                         return (
                           <button
                             disabled
@@ -411,7 +415,7 @@ const UsersPage = () => {
                           </button>
                         );
 
-                      if (status === "RECEIVED_BY_ME")
+                      if (status === 'RECEIVED_BY_ME')
                         return (
                           <div className="flex gap-2">
                             <button
@@ -428,7 +432,7 @@ const UsersPage = () => {
                             </button>
                           </div>
                         );
-                      if (status === "NONE")
+                      if (status === 'NONE')
                         return (
                           <button
                             className="transition-all hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"
@@ -441,19 +445,19 @@ const UsersPage = () => {
                   </div>
 
                   <span className="text-[14px] font-bold text-[#444444]">
-                    {user.fullname ? user.fullname : "N/A"} |
-                    {user.date ? ` ${calculateAge(user.date)} años` : " N/A"}
+                    {user.fullname ? user.fullname : 'N/A'} |
+                    {user.date ? ` ${calculateAge(user.date)} años` : ' N/A'}
                   </span>
 
                   <p className="h-[51px] text-[14px] text-[#444444] leading-[17px]">
                     <span className="font-bold">Email:</span> {user.email}
                     <br />
-                    <span className="font-bold">Rol:</span>{" "}
+                    <span className="font-bold">Rol:</span>{' '}
                     {user.role.role.charAt(0).toUpperCase() +
                       user.role.role.slice(1).toLowerCase()}
                     <br />
-                    <span className="font-bold">Fecha ingreso:</span>{" "}
-                    {user.createdAt ? formatDate(user.createdAt) : "N/A"}
+                    <span className="font-bold">Fecha ingreso:</span>{' '}
+                    {user.createdAt ? formatDate(user.createdAt) : 'N/A'}
                   </p>
                 </div>
               ))}
@@ -588,19 +592,19 @@ const UsersPage = () => {
                           <div
                             key={i}
                             className={`h-[60px] grid grid-cols-7 items-center ${
-                              user.verify ? "bg-[#39B54A1A]" : "bg-[#E615871A]"
+                              user.verify ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'
                             }`}
                           >
                             <div className="text-[14px] font-normal text-[#444444] text-center relative">
                               <div
                                 className={`w-[4px] h-[40px] absolute rounded-r-[10px] left-0 top-1/2 -translate-y-1/2 ${
-                                  user.verify ? "bg-[#39B54A]" : "bg-[#E61587]"
+                                  user.verify ? 'bg-[#39B54A]' : 'bg-[#E61587]'
                                 }`}
                               ></div>
-                              {user.fullname ? user.fullname : "N/A"}
+                              {user.fullname ? user.fullname : 'N/A'}
                             </div>
                             <div className="text-[14px] font-bold text-[#444444] text-center">
-                              {user.date ? calculateAge(user.date) : "N/A"}
+                              {user.date ? calculateAge(user.date) : 'N/A'}
                             </div>
                             <div className="text-[14px] font-bold text-[#444444] text-center">
                               {user.email}
@@ -612,30 +616,30 @@ const UsersPage = () => {
                             <div className="text-[14px] font-bold text-[#444444] text-center">
                               {user.createdAt
                                 ? formatDate(user.createdAt)
-                                : "N/A"}
+                                : 'N/A'}
                             </div>
                             <div>
                               <div
                                 className={`w-[100px] h-[20px] flex items-center justify-center rounded-[40px] px-[7px]! mx-auto! ${
                                   user.verify
-                                    ? "bg-[#39B54A33]"
-                                    : "bg-[#E6158733]"
+                                    ? 'bg-[#39B54A33]'
+                                    : 'bg-[#E6158733]'
                                 }`}
                               >
                                 <span
                                   className={`h-[20x] leading-[20px] text-[12px] ${
                                     user.verify
-                                      ? "text-[#39B54A]"
-                                      : "text-[#E61587]"
+                                      ? 'text-[#39B54A]'
+                                      : 'text-[#E61587]'
                                   }`}
                                 >
-                                  {user.verify ? "Verificado" : "No verificado"}
+                                  {user.verify ? 'Verificado' : 'No verificado'}
                                 </span>
                                 <div
                                   className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${
                                     user.verify
-                                      ? "bg-[#39B54A]"
-                                      : "bg-[#E61587]"
+                                      ? 'bg-[#39B54A]'
+                                      : 'bg-[#E61587]'
                                   }`}
                                 ></div>
                               </div>
@@ -643,7 +647,7 @@ const UsersPage = () => {
                             <div className="flex items-center justify-center">
                               {(() => {
                                 const status = getFriendshipStatus(user);
-                                if (status === "FRIENDS")
+                                if (status === 'FRIENDS')
                                   return (
                                     <button
                                       className="text-black-500 cursor-pointer hover:bg-[#39B54A33] rounded-full"
@@ -652,17 +656,17 @@ const UsersPage = () => {
                                           getMessages({
                                             senderId: auth.user!._id,
                                             receiverId: user._id,
-                                          })
+                                          }),
                                         );
                                         dispatch(setActiveChat(user));
-                                        dispatch(resetUnreadCount(user!._id))
+                                        dispatch(resetUnreadCount(user!._id));
                                       }}
                                     >
                                       <TbEditCircle size={32} />
                                     </button>
                                   );
 
-                                if (status === "SENT_BY_ME")
+                                if (status === 'SENT_BY_ME')
                                   return (
                                     <button
                                       disabled
@@ -672,7 +676,7 @@ const UsersPage = () => {
                                     </button>
                                   );
 
-                                if (status === "RECEIVED_BY_ME")
+                                if (status === 'RECEIVED_BY_ME')
                                   return (
                                     <div className="flex gap-2">
                                       <button
@@ -689,7 +693,7 @@ const UsersPage = () => {
                                       </button>
                                     </div>
                                   );
-                                if (status === "NONE")
+                                if (status === 'NONE')
                                   return (
                                     <button
                                       className="transition-all text-black-500 hover:bg-[#39B54A33] cursor-pointer rounded-full p-1"

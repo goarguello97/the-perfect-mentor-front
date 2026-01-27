@@ -1,22 +1,22 @@
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 
 type AppState = {
-  theme: "light" | "dark";
+  theme: 'light' | 'dark';
 };
 
 const initialState: AppState = {
-  theme: "dark",
+  theme: 'dark',
 };
 
 const appSlice = createSlice({
-  name: "app",
+  name: 'app',
   initialState,
   reducers: {
     toggleTheme(state) {
-      state.theme = state.theme === "dark" ? "light" : "dark";
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
     },
-    setTheme(state, action: PayloadAction<AppState["theme"]>) {
+    setTheme(state, action: PayloadAction<AppState['theme']>) {
       state.theme = action.payload;
     },
   },

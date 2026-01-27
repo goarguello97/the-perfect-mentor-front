@@ -1,20 +1,20 @@
-import doodle2 from "@assets/doodle-4 1.svg";
-import doodle from "@assets/doodle-5 1.svg";
-import email from "@assets/email.svg";
-import group from "@assets/Mask group.svg";
-import password from "@assets/password.svg";
-import saly from "@assets/Saly-2.svg";
-import salybug from "@assets/Saly-30.svg";
-import tmpLogo from "@assets/TPM.svg";
-import user from "@assets/user.svg";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BounceLoader } from "react-spinners";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { REGISTER_INITIAL_VALUES } from "../constants";
-import { registerUser, resetAuthState } from "../features/auth/authSlice";
-import { validationRegister } from "../helpers/validations";
-import useForm from "../hooks/useFormHook";
+import doodle2 from '@assets/doodle-4 1.svg';
+import doodle from '@assets/doodle-5 1.svg';
+import email from '@assets/email.svg';
+import group from '@assets/Mask group.svg';
+import password from '@assets/password.svg';
+import saly from '@assets/Saly-2.svg';
+import salybug from '@assets/Saly-30.svg';
+import tmpLogo from '@assets/TPM.svg';
+import user from '@assets/user.svg';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { REGISTER_INITIAL_VALUES } from '../constants';
+import { registerUser, resetAuthState } from '../features/auth/authSlice';
+import { validationRegister } from '../helpers/validations';
+import useForm from '../hooks/useFormHook';
 
 const SignUpPage = () => {
   const dispatch = useAppDispatch();
@@ -24,18 +24,18 @@ const SignUpPage = () => {
   const { values, handleChange, handleSubmit, formErrors } = useForm(
     REGISTER_INITIAL_VALUES,
     registerUser,
-    validationRegister
+    validationRegister,
   );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (status.register == "failed") {
+    if (status.register == 'failed') {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
       }, 5000);
-    } else if (status.register == "succeeded") {
+    } else if (status.register == 'succeeded') {
       timer = setTimeout(() => {
-        navigate("/login");
+        navigate('/login');
       }, 5000);
     }
 
@@ -142,21 +142,21 @@ const SignUpPage = () => {
             </div>
           </div>
         )}
-        {status.register == "failed" && (
+        {status.register == 'failed' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">{errors.register}</p>
             </div>
           </div>
         )}
-        {status.register == "succeeded" && (
+        {status.register == 'succeeded' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#39B54A] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">¡Se ha registrado exitosamente!</p>
             </div>
           </div>
         )}
-        {status.register == "loading" && (
+        {status.register == 'loading' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <BounceLoader color="#39B54A" />
           </div>
@@ -273,21 +273,21 @@ const SignUpPage = () => {
               </div>
             </div>
           )}
-          {status.register == "failed" && (
+          {status.register == 'failed' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
                 <p className="p-3!">{errors.register}</p>
               </div>
             </div>
           )}
-          {status.register == "succeeded" && (
+          {status.register == 'succeeded' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#39B54A] p-3! rounded-[40px] text-white">
                 <p className="p-3!">¡Se ha registrado exitosamente!</p>
               </div>
             </div>
           )}
-          {status.register == "loading" && (
+          {status.register == 'loading' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <BounceLoader color="#39B54A" />
             </div>

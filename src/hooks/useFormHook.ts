@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch } from "../app/hooks";
+import { useEffect, useState } from 'react';
+import { useAppDispatch } from '../app/hooks';
 
 const useForm = (initialValues: any, submit: any, validations: any) => {
   const [values, setValues] = useState(initialValues);
@@ -22,9 +22,9 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
-    if (e.target instanceof HTMLInputElement && e.target.type == "checkbox") {
+    if (e.target instanceof HTMLInputElement && e.target.type == 'checkbox') {
       setValues({ ...values, [e.target.name]: e.target.checked });
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });

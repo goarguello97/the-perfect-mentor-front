@@ -1,12 +1,12 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-} from "firebase/auth";
-import axiosInstance from "../../config/axiosInstance";
-import { auth } from "../../firebase/firebase";
-import { firebaseErrorSpa } from "./firebaseErrors";
+} from 'firebase/auth';
+import axiosInstance from '../../config/axiosInstance';
+import { auth } from '../../firebase/firebase';
+import { firebaseErrorSpa } from './firebaseErrors';
 
 interface User {
   _id: string;
@@ -42,7 +42,7 @@ interface Login {
   password: string;
 }
 
-type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
+type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 interface AuthStatus {
   login: RequestStatus;
   register: RequestStatus;
@@ -78,13 +78,13 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isPersisted: false,
   status: {
-    login: "idle",
-    register: "idle",
-    activation: "idle",
-    persistance: "loading",
-    passwordRecovery: "idle",
-    updatePassword: "idle",
-    updateUser: "idle",
+    login: 'idle',
+    register: 'idle',
+    activation: 'idle',
+    persistance: 'loading',
+    passwordRecovery: 'idle',
+    updatePassword: 'idle',
+    updateUser: 'idle',
   },
   errors: {
     login: null,
@@ -98,17 +98,17 @@ const initialState: AuthState = {
 };
 
 export const registerUser = createAsyncThunk(
-  "auth/registerUser",
+  'auth/registerUser',
   async ({ username, email, password }: Register, thunkAPI) => {
     try {
       const firebaseUser = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
 
       if (!firebaseUser.user) {
-        throw new Error("Error al crear el usuario.");
+        throw new Error('Error al crear el usuario.');
       }
 
       const user = firebaseUser.user;
@@ -127,21 +127,21 @@ export const registerUser = createAsyncThunk(
         error.response?.data;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
+  'auth/loginUser',
   async ({ email, password }: Login, thunkAPI) => {
     try {
       const firebaseUser = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
 
       if (!firebaseUser.user) {
-        throw new Error("Error al iniciar sesión.");
+        throw new Error('Error al iniciar sesión.');
       }
 
       const user = firebaseUser.user;
@@ -150,7 +150,7 @@ export const loginUser = createAsyncThunk(
 
       if (!response.data.verify) {
         await signOut(auth);
-        throw new Error("Debes activar tu usuario.");
+        throw new Error('Debes activar tu usuario.');
       }
 
       return response.data;
@@ -162,14 +162,14 @@ export const loginUser = createAsyncThunk(
         error.message;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const validationUser = createAsyncThunk(
-  "auth/validateUser",
+  'auth/validateUser',
   async (token: string, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/users/auth/validate", {
+      const response = await axiosInstance.get('/users/auth/validate', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -186,11 +186,11 @@ export const validationUser = createAsyncThunk(
         error.response?.data;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const activateUser = createAsyncThunk(
-  "auth/activateUser",
+  'auth/activateUser',
   async (token: string, thunkAPI) => {
     try {
       const response = await axiosInstance.get(`/users/auth/activate`, {
@@ -205,11 +205,11 @@ export const activateUser = createAsyncThunk(
         error.response?.data;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
+  'auth/logoutUser',
   async (_, thunkAPI) => {
     try {
       await signOut(auth);
@@ -221,16 +221,16 @@ export const logoutUser = createAsyncThunk(
         error.message;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const recoverPassword = createAsyncThunk(
-  "auth/recoverPassword",
+  'auth/recoverPassword',
   async (email: string, thunkAPI) => {
     try {
       const response = await axiosInstance.post(
-        "/users/recover-password",
-        email
+        '/users/recover-password',
+        email,
       );
 
       return { message: response.data.message };
@@ -240,29 +240,29 @@ export const recoverPassword = createAsyncThunk(
           firebaseErrorSpa[error.code]) ||
         error.response?.data ||
         error.message ||
-        "Error al enviar el email de recuperación";
+        'Error al enviar el email de recuperación';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const updatePassword = createAsyncThunk(
-  "auth/updatePassword",
+  'auth/updatePassword',
   async (
     { token, password }: { token: string; password: string },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
       const response = await axiosInstance.put(
-        "/users/update/password",
+        '/users/update/password',
         { password },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       return {
-        message: response.data.message || "Contraseña actualizada exitosamente",
+        message: response.data.message || 'Contraseña actualizada exitosamente',
       };
     } catch (error: any) {
       const errorMessage =
@@ -270,24 +270,24 @@ export const updatePassword = createAsyncThunk(
           firebaseErrorSpa[error.code]) ||
         error.response?.data ||
         error.message ||
-        "Error al cambiar la contraseña";
+        'Error al cambiar la contraseña';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const updateUser = createAsyncThunk(
-  "auth/updateUser",
+  'auth/updateUser',
   async (data, thunkAPI) => {
     try {
       const user = auth.currentUser;
 
-      if (!user) throw new Error("Usuario no autenticado");
+      if (!user) throw new Error('Usuario no autenticado');
 
       const token = user.getIdToken();
 
       if (!token) {
-        throw new Error("No hay token de autenticación disponible");
+        throw new Error('No hay token de autenticación disponible');
       }
 
       const response = await axiosInstance.put(`/users/${user.uid}`, data, {
@@ -303,16 +303,16 @@ export const updateUser = createAsyncThunk(
         error.message;
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     resetAuthState: () => ({
       ...initialState,
-      status: { ...initialState.status, persistance: "idle" as RequestStatus },
+      status: { ...initialState.status, persistance: 'idle' as RequestStatus },
     }),
     logout: (state) => {
       state.user = null;
@@ -323,53 +323,53 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
-        state.status.register = "loading";
+        state.status.register = 'loading';
       })
       .addCase(registerUser.fulfilled, (state, _) => {
-        state.status.register = "succeeded";
+        state.status.register = 'succeeded';
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.user = null;
-        state.status.register = "failed";
+        state.status.register = 'failed';
         state.errors.register = action.payload as string;
       })
       .addCase(loginUser.pending, (state) => {
-        state.status.login = "loading";
+        state.status.login = 'loading';
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.status.login = "succeeded";
+        state.status.login = 'succeeded';
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.status.login = "failed";
+        state.status.login = 'failed';
         state.errors.login = action.payload as string;
       })
       .addCase(validationUser.pending, (state) => {
-        state.status.persistance = "loading";
+        state.status.persistance = 'loading';
       })
       .addCase(validationUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.status.persistance = "succeeded";
+        state.status.persistance = 'succeeded';
         state.isPersisted = true;
       })
       .addCase(validationUser.rejected, (state, action) => {
         state.user = null;
         state.token = null;
         state.isPersisted = false;
-        state.status.persistance = "failed";
+        state.status.persistance = 'failed';
         state.errors.persistance = action.payload as string;
       })
       .addCase(activateUser.pending, (state) => {
-        state.status.activation = "loading";
+        state.status.activation = 'loading';
       })
       .addCase(activateUser.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.status.activation = "succeeded";
+        state.status.activation = 'succeeded';
       })
       .addCase(activateUser.rejected, (state, action) => {
         state.user = null;
-        state.status.activation = "failed";
+        state.status.activation = 'failed';
         state.errors.activation = action.payload as string;
       })
       .addCase(logoutUser.fulfilled, (state, _) => {
@@ -377,10 +377,10 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.isPersisted = false;
-        state.status.login = "idle";
-        state.status.register = "idle";
-        state.status.activation = "idle";
-        state.status.persistance = "idle";
+        state.status.login = 'idle';
+        state.status.register = 'idle';
+        state.status.activation = 'idle';
+        state.status.persistance = 'idle';
         state.errors.login = null;
         state.errors.register = null;
         state.errors.activation = null;
@@ -391,43 +391,44 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.isPersisted = false;
-        state.status.login = "idle";
-        state.status.register = "idle";
-        state.status.activation = "idle";
-        state.status.persistance = "idle";
+        state.status.login = 'idle';
+        state.status.register = 'idle';
+        state.status.activation = 'idle';
+        state.status.persistance = 'idle';
       })
       .addCase(recoverPassword.pending, (state) => {
-        state.status.passwordRecovery = "loading";
+        state.status.passwordRecovery = 'loading';
         state.errors.passwordRecovery = null;
       })
       .addCase(recoverPassword.fulfilled, (state) => {
-        state.status.passwordRecovery = "succeeded";
+        state.status.passwordRecovery = 'succeeded';
         state.errors.passwordRecovery = null;
       })
       .addCase(recoverPassword.rejected, (state, action) => {
-        state.status.passwordRecovery = "failed";
+        state.status.passwordRecovery = 'failed';
         state.errors.passwordRecovery = action.payload as string;
       })
       .addCase(updatePassword.pending, (state) => {
-        state.status.updatePassword = "loading";
+        state.status.updatePassword = 'loading';
         state.errors.updatePassword = null;
       })
       .addCase(updatePassword.fulfilled, (state) => {
-        state.status.updatePassword = "succeeded";
+        state.status.updatePassword = 'succeeded';
         state.errors.updatePassword = null;
       })
       .addCase(updatePassword.rejected, (state, action) => {
-        state.status.updatePassword = "failed";
+        state.status.updatePassword = 'failed';
         state.errors.updatePassword = action.payload as string;
       })
       .addCase(updateUser.pending, (state) => {
-        state.status.updateUser = "loading";
+        state.status.updateUser = 'loading';
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        (state.status.updateUser = "succeeded"), (state.user = action.payload);
+        ((state.status.updateUser = 'succeeded'),
+          (state.user = action.payload));
       })
       .addCase(updateUser.rejected, (state, action) => {
-        state.status.updateUser = "failed";
+        state.status.updateUser = 'failed';
         state.errors.updateUser = action.payload as any;
       });
   },

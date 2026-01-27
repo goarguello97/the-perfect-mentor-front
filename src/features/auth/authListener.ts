@@ -1,6 +1,6 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
-import { resetAuthState, validationUser } from "./authSlice";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../firebase/firebase';
+import { resetAuthState, validationUser } from './authSlice';
 
 export const startAuthListener = (dispatch: any) => {
   onAuthStateChanged(auth, async (user) => {

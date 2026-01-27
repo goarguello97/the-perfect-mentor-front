@@ -1,36 +1,35 @@
-import { Route, Routes, useLocation } from "react-router-dom";
-import { useAppSelector } from "./app/hooks";
-import ChatBar from "./components/ChatBar";
-import ChatWindow from "./components/ChatWindow";
-import Navbar from "./components/Navbar";
-import { useSocket } from "./hooks/useSocketHook";
-import ActivateUserPage from "./pages/ActivateUserPage";
-import ChangePasswordPage from "./pages/ChangePasswordPage";
-import CompleteUserDataPage from "./pages/CompleteUserDataPage";
-import LoginPage from "./pages/LoginPage";
-import MainPage from "./pages/MainPage";
-import ProfilePage from "./pages/ProfilePage";
-import RecoverPasswordPage from "./pages/RecoverPasswordPage";
-import ReportPage from "./pages/ReportPage";
-import ReportsPage from "./pages/ReportsPage";
-import SignUpPage from "./pages/SignUpPage";
-import StadisticsPage from "./pages/StadisticsPage";
-import UsersPage from "./pages/UsersPage";
-import PrivateRoute from "./routes/PrivateRoute";
-import PublicRoute from "./routes/PublicRoute";
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { useAppSelector } from './app/hooks';
+import ChatBar from './components/ChatBar';
+import ChatWindow from './components/ChatWindow';
+import Navbar from './components/Navbar';
+import { useSocket } from './hooks/useSocketHook';
+import ActivateUserPage from './pages/ActivateUserPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
+import CompleteUserDataPage from './pages/CompleteUserDataPage';
+import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
+import ProfilePage from './pages/ProfilePage';
+import RecoverPasswordPage from './pages/RecoverPasswordPage';
+import ReportPage from './pages/ReportPage';
+import ReportsPage from './pages/ReportsPage';
+import SignUpPage from './pages/SignUpPage';
+import StadisticsPage from './pages/StadisticsPage';
+import UsersPage from './pages/UsersPage';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 
 function App() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/", "/login", "/signup", "/recover", "/user-data"];
+  const hideNavbarRoutes = ['/', '/login', '/signup', '/recover', '/user-data'];
   const shouldShowBar =
     !hideNavbarRoutes.includes(location.pathname) &&
-    !location.pathname.startsWith("/activate/") &&
-    !location.pathname.startsWith("/change-password/");
+    !location.pathname.startsWith('/activate/') &&
+    !location.pathname.startsWith('/change-password/');
 
   const { user } = useAppSelector((state) => state.auth);
-  
-  useSocket(user?._id);
 
+  useSocket(user?._id);
 
   return (
     <>

@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { BounceLoader } from "react-spinners";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { activateUser, resetAuthState } from "../features/auth/authSlice";
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { activateUser, resetAuthState } from '../features/auth/authSlice';
 
 const ActivateUserPage = () => {
   const dispatch = useAppDispatch();
@@ -13,14 +13,14 @@ const ActivateUserPage = () => {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (token && status.activation == "idle") {
+    if (token && status.activation == 'idle') {
       dispatch(activateUser(token));
     }
 
-    if (status.activation == "succeeded") {
+    if (status.activation == 'succeeded') {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
-        navigate("/login");
+        navigate('/login');
       }, 5000);
     }
 
@@ -31,14 +31,14 @@ const ActivateUserPage = () => {
     };
   }, [token, errors.activation, status.activation]);
 
-  if (status.activation == "loading")
+  if (status.activation == 'loading')
     return (
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
         <BounceLoader color="#39B54A" />
       </div>
     );
 
-  if (status.activation == "failed")
+  if (status.activation == 'failed')
     return (
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
         <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">

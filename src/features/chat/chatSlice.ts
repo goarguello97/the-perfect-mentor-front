@@ -2,8 +2,8 @@ import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
-} from "@reduxjs/toolkit";
-import axiosInstance from "../../config/axiosInstance";
+} from '@reduxjs/toolkit';
+import axiosInstance from '../../config/axiosInstance';
 
 interface User {
   _id: string;
@@ -39,13 +39,13 @@ interface Message {
 interface ChatState {
   activeChatUser: User | null;
   messages: Message[];
-  chats: any[]
+  chats: any[];
   unreadMessages: number;
   errors: MdErrors;
   status: MdStatus;
 }
 
-type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
+type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 interface MdErrors {
   activeChatUser: string | null;
@@ -56,7 +56,7 @@ interface MdErrors {
 interface MdStatus {
   activeChatUser: RequestStatus;
   messages: RequestStatus;
-  chats: RequestStatus
+  chats: RequestStatus;
 }
 
 const initialState: ChatState = {
@@ -65,60 +65,61 @@ const initialState: ChatState = {
   chats: [],
   unreadMessages: 0,
   status: {
-    activeChatUser: "idle",
-    messages: "idle",
-    chats: "idle"
+    activeChatUser: 'idle',
+    messages: 'idle',
+    chats: 'idle',
   },
   errors: {
     activeChatUser: null,
     messages: null,
-    chats: null
+    chats: null,
   },
 };
 
 export const sendMessage = createAsyncThunk(
-  "chat/sendMessage",
+  'chat/sendMessage',
   async (
     data: { senderId: string; receiverId: string; content: string },
-    thunkAPI
+    thunkAPI,
   ) => {
     try {
-      const response = await axiosInstance.post("/md", data);
+      const response = await axiosInstance.post('/md', data);
 
       return response.data;
     } catch (error: any) {
       const errorMessage =
-        error.response?.data || error.message || "Error al enviar el mensaje";
+        error.response?.data || error.message || 'Error al enviar el mensaje';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
-export const getUserMessages = createAsyncThunk("chat/getUserMessages", async (data:{userId:string}, thunkAPI) => {
-  try {
-    
-    const { userId } = data;
+export const getUserMessages = createAsyncThunk(
+  'chat/getUserMessages',
+  async (data: { userId: string }, thunkAPI) => {
+    try {
+      const { userId } = data;
 
-    const response = await axiosInstance.get(`/md/${userId}`)
-    return response.data    
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data ||
-      error.message ||
-      "Error al obtener los mensajes antiguos";
-    return thunkAPI.rejectWithValue(errorMessage);
-    
-  }
-})
+      const response = await axiosInstance.get(`/md/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data ||
+        error.message ||
+        'Error al obtener los mensajes antiguos';
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  },
+);
 
 export const getMessages = createAsyncThunk(
-  "chat/getMessages",
+  'chat/getMessages',
   async (data: { senderId: string; receiverId: string }, thunkAPI) => {
     try {
       const { senderId, receiverId } = data;
 
       const response = await axiosInstance(
-        `/md?senderId=${senderId}&receiverId=${receiverId}`
+        `/md?senderId=${senderId}&receiverId=${receiverId}`,
       );
 
       return response.data;
@@ -126,14 +127,14 @@ export const getMessages = createAsyncThunk(
       const errorMessage =
         error.response?.data ||
         error.message ||
-        "Error al obtener los mensajes antiguos";
+        'Error al obtener los mensajes antiguos';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 const chatSlice = createSlice({
-  name: "chat",
+  name: 'chat',
   initialState,
   reducers: {
     setActiveChat: (state, action) => {
@@ -152,7 +153,7 @@ const chatSlice = createSlice({
         state.activeChatUser?._id === msg.receiverId;
 
       const alreadyExists = state.messages.some(
-        (m) => m._id.toString() === msg._id.toString()
+        (m) => m._id.toString() === msg._id.toString(),
       );
 
       if (isRelevant && !alreadyExists) {
@@ -173,39 +174,48 @@ const chatSlice = createSlice({
   extraReducers: (builder) =>
     builder
       .addCase(sendMessage.pending, (state) => {
-        state.status.activeChatUser = "loading";
+        state.status.activeChatUser = 'loading';
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
-        state.status.activeChatUser = "succeeded";
+        state.status.activeChatUser = 'succeeded';
         state.messages.push(action.payload);
       })
       .addCase(sendMessage.rejected, (state) => {
-        state.status.activeChatUser = "failed";
+        state.status.activeChatUser = 'failed';
       })
       .addCase(getUserMessages.pending, (state) => {
-        state.status.chats = "loading";
+        state.status.chats = 'loading';
       })
       .addCase(getUserMessages.fulfilled, (state, action) => {
-        state.status.chats = "succeeded";
-        state.chats = action.payload
-        state.unreadMessages = action.payload.reduce((acc, chat) => acc + chat.unreadCount, 0)
+        state.status.chats = 'succeeded';
+        state.chats = action.payload;
+        state.unreadMessages = action.payload.reduce(
+          (acc, chat) => acc + chat.unreadCount,
+          0,
+        );
       })
       .addCase(getUserMessages.rejected, (state) => {
-        state.status.chats = "failed";
+        state.status.chats = 'failed';
       })
       .addCase(getMessages.pending, (state) => {
-        state.status.messages = "loading";
+        state.status.messages = 'loading';
       })
       .addCase(getMessages.fulfilled, (state, action) => {
-        state.status.messages = "succeeded";
-        state.messages = action.payload
+        state.status.messages = 'succeeded';
+        state.messages = action.payload;
       })
       .addCase(getMessages.rejected, (state) => {
-        state.status.messages = "failed";
+        state.status.messages = 'failed';
       }),
 });
 
-export const { addMessage, closeChat, setActiveChat, receiveMessage, incrementUnreadCount, resetUnreadCount } =
-  chatSlice.actions;
+export const {
+  addMessage,
+  closeChat,
+  setActiveChat,
+  receiveMessage,
+  incrementUnreadCount,
+  resetUnreadCount,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;

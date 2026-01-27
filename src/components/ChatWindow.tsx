@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { IoClose, IoSendOutline } from "react-icons/io5";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { CHAT_INITIAL_VALUES } from "../constants";
-import { closeChat, getUserMessages, sendMessage } from "../features/chat/chatSlice";
+import React, { useEffect, useRef, useState } from 'react';
+import { IoClose, IoSendOutline } from 'react-icons/io5';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { CHAT_INITIAL_VALUES } from '../constants';
+import {
+  closeChat,
+  getUserMessages,
+  sendMessage,
+} from '../features/chat/chatSlice';
 
 const MessageList = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -24,20 +28,20 @@ const MessageList = React.memo(() => {
       messageDate.getFullYear() === now.getFullYear();
 
     const timeOptions: Intl.DateTimeFormatOptions = {
-      hour: "2-digit",
-      minute: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
     };
 
     if (isToday) {
-      return messageDate.toLocaleTimeString("es-AR", timeOptions);
+      return messageDate.toLocaleTimeString('es-AR', timeOptions);
     } else {
       const dateOptions: Intl.DateTimeFormatOptions = {
-        day: "2-digit",
-        month: "2-digit",
+        day: '2-digit',
+        month: '2-digit',
         ...timeOptions,
       };
-      return messageDate.toLocaleString("es-AR", dateOptions).replace(",", "");
+      return messageDate.toLocaleString('es-AR', dateOptions).replace(',', '');
     }
   };
 
@@ -47,13 +51,13 @@ const MessageList = React.memo(() => {
       if (isInitialMobLoad.current) {
         scrollContainer.scrollTo({
           top: scrollContainer.scrollHeight,
-          behavior: "auto",
+          behavior: 'auto',
         });
         isInitialMobLoad.current = false;
       } else {
         scrollContainer?.scrollTo({
           top: scrollContainer.scrollHeight,
-          behavior: "smooth",
+          behavior: 'smooth',
         });
       }
     }
@@ -69,13 +73,13 @@ const MessageList = React.memo(() => {
       if (isInitialLoad.current) {
         scrollContainer.scrollTo({
           top: scrollContainer.scrollHeight,
-          behavior: "auto",
+          behavior: 'auto',
         });
         isInitialLoad.current = false;
       } else {
         scrollContainer?.scrollTo({
           top: scrollContainer.scrollHeight,
-          behavior: "smooth",
+          behavior: 'smooth',
         });
       }
     }
@@ -92,12 +96,14 @@ const MessageList = React.memo(() => {
       <div className="md:hidden fixed flex bottom-[120px] w-[calc(100%-20px)] left-1/2 -translate-x-1/2 h-[400px] max-h-[60dvh] bg-white rounded-t-[20px] flex-col pb-4! shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-40">
         <div className="bg-[#444444] p-3! text-[#BFD732] flex justify-between rounded-t-[20px]">
           <span>{activeChatUser.fullname}</span>
-          <button onClick={() => { 
-            if (user) {
-                dispatch(getUserMessages({ userId: user?._id }))
+          <button
+            onClick={() => {
+              if (user) {
+                dispatch(getUserMessages({ userId: user?._id }));
               }
-            dispatch(closeChat())
-          }}>
+              dispatch(closeChat());
+            }}
+          >
             <IoClose size={25} />
           </button>
         </div>
@@ -124,8 +130,8 @@ const MessageList = React.memo(() => {
                 <span
                   className={`p-2! my-1! rounded-lg text-[14px] text-[#222222] ${
                     m.senderId === user?._id
-                      ? "bg-[#39B54A1A] self-end"
-                      : "bg-[#F5F6F7] self-start"
+                      ? 'bg-[#39B54A1A] self-end'
+                      : 'bg-[#F5F6F7] self-start'
                   }`}
                 >
                   {m.content}
@@ -133,7 +139,7 @@ const MessageList = React.memo(() => {
                 {showTime && (
                   <span
                     className={`px-2! rounded-lg text-[8px] ${
-                      m.senderId === user?._id ? "self-end" : "self-start"
+                      m.senderId === user?._id ? 'self-end' : 'self-start'
                     }`}
                   >
                     {currentTime}
@@ -150,11 +156,11 @@ const MessageList = React.memo(() => {
           <span>{activeChatUser.fullname}</span>
           <button
             onClick={() => {
-              dispatch(closeChat()) 
+              dispatch(closeChat());
               if (user) {
-                dispatch(getUserMessages({ userId: user?._id }))
+                dispatch(getUserMessages({ userId: user?._id }));
               }
-          }}
+            }}
             className="cursor-pointer hover:bg-[#BFD73220] rounded-full transition-all"
           >
             <IoClose size={25} />
@@ -183,8 +189,8 @@ const MessageList = React.memo(() => {
                 <span
                   className={`p-2! my-1! rounded-lg text-[14px] text-[#222222] ${
                     m.senderId === user?._id
-                      ? "bg-[#39B54A1A] self-end"
-                      : "bg-[#F5F6F7] self-start"
+                      ? 'bg-[#39B54A1A] self-end'
+                      : 'bg-[#F5F6F7] self-start'
                   }`}
                 >
                   {m.content}
@@ -192,7 +198,7 @@ const MessageList = React.memo(() => {
                 {showTime && (
                   <span
                     className={`px-2! rounded-lg text-[8px] ${
-                      m.senderId === user?._id ? "self-end" : "self-start"
+                      m.senderId === user?._id ? 'self-end' : 'self-start'
                     }`}
                   >
                     {currentTime}
@@ -216,7 +222,7 @@ const ChatInput = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -228,7 +234,7 @@ const ChatInput = () => {
         senderId: user!._id.toString(),
         receiverId: activeChatUser!._id.toString(),
         content: values.content,
-      })
+      }),
     );
     setValues(CHAT_INITIAL_VALUES);
   };
