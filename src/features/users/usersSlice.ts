@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../config/axiosInstance";
-import { auth } from "../../firebase/firebase";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axiosInstance from '../../config/axiosInstance';
+import { auth } from '../../firebase/firebase';
 
 interface User {
   _id: string;
@@ -34,14 +34,14 @@ interface Info {
   summary: {
     totalUsersAllTime: number;
     totalNewUsersThisYear: number;
-    breakdownAllTime:{
-      mentors:number
-      mentees:number
-    }
+    breakdownAllTime: {
+      mentors: number;
+      mentees: number;
+    };
   };
 }
 
-type RequestStatus = "idle" | "loading" | "succeeded" | "failed";
+type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 interface UsersErrors {
   users: string | null;
@@ -74,9 +74,9 @@ const initialState: UsersState = {
   total: null,
   totalPages: null,
   status: {
-    users: "idle",
-    user: "idle",
-    info: "idle",
+    users: 'idle',
+    user: 'idle',
+    info: 'idle',
   },
   errors: {
     users: null,
@@ -86,17 +86,17 @@ const initialState: UsersState = {
 };
 
 export const getUsers = createAsyncThunk(
-  "users/getUsers",
-  async (filters: string | undefined = "", thunkAPI) => {
+  'users/getUsers',
+  async (filters: string | undefined = '', thunkAPI) => {
     try {
       const user = auth.currentUser;
 
-      if (!user) throw new Error("Usuario no autenticado");
+      if (!user) throw new Error('Usuario no autenticado');
 
       const token = user.getIdToken();
 
       if (!token) {
-        throw new Error("No hay token de autenticación disponible");
+        throw new Error('No hay token de autenticación disponible');
       }
 
       const response = await axiosInstance.get(`/users?${filters}`, {
@@ -108,26 +108,26 @@ export const getUsers = createAsyncThunk(
       const errorMessage =
         error.response?.data ||
         error.message ||
-        "Error al obtener los usuarios";
+        'Error al obtener los usuarios';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 export const getUserPerMonth = createAsyncThunk(
-  "users/getUsersPerMonth",
+  'users/getUsersPerMonth',
   async (_, thunkAPI) => {
     try {
       const user = auth.currentUser;
 
-      if (!user) throw new Error("Usuario no autenticado");
+      if (!user) throw new Error('Usuario no autenticado');
 
       const token = user.getIdToken();
 
       if (!token) {
-        throw new Error("No hay token de autenticación disponible");
+        throw new Error('No hay token de autenticación disponible');
       }
-      const stadistics = await axiosInstance.get("/users/stats/info", {
+      const stadistics = await axiosInstance.get('/users/stats/info', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -136,24 +136,24 @@ export const getUserPerMonth = createAsyncThunk(
       const errorMessage =
         error.response?.data ||
         error.message ||
-        "Error al obtener los usuarios";
+        'Error al obtener los usuarios';
       return thunkAPI.rejectWithValue(errorMessage);
     }
-  }
+  },
 );
 
 const usersSlice = createSlice({
-  name: "users",
+  name: 'users',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getUsers.pending, (state) => {
-        state.status.users = "loading";
+        state.status.users = 'loading';
         state.errors.users = null;
       })
       .addCase(getUsers.fulfilled, (state, action) => {
-        state.status.users = "succeeded";
+        state.status.users = 'succeeded';
         const { users, isScrolling } = action.payload;
 
         if (isScrolling) {
@@ -171,18 +171,18 @@ const usersSlice = createSlice({
         state.errors.users = null;
       })
       .addCase(getUsers.rejected, (state, action) => {
-        state.status.users = "failed";
+        state.status.users = 'failed';
         state.errors.users = action.payload as string;
       })
       .addCase(getUserPerMonth.pending, (state) => {
-        state.status.info = "loading";
+        state.status.info = 'loading';
       })
       .addCase(getUserPerMonth.fulfilled, (state, action) => {
-        state.status.info = "succeeded";
+        state.status.info = 'succeeded';
         state.info = action.payload;
       })
       .addCase(getUserPerMonth.rejected, (state, action) => {
-        state.status.info = "failed";
+        state.status.info = 'failed';
         state.errors.info = action.payload as string;
       });
   },

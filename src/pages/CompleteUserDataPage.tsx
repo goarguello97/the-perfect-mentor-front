@@ -1,17 +1,17 @@
-import avatar from "@assets/avatar.svg";
-import doodle from "@assets/doodle-4 1.svg";
-import doodle2 from "@assets/doodle-5 1.svg";
-import maskGroup from "@assets/Mask group.svg";
-import saly from "@assets/Saly-30.svg";
-import { useEffect } from "react";
-import { FaEyeSlash } from "react-icons/fa";
-import { TbEditCircle } from "react-icons/tb";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { COMPLETE_USER_DATA_INITIAL_VALUES } from "../constants";
-import { updateUser } from "../features/auth/authSlice";
-import { getRoles } from "../features/roles/rolesSlice";
-import { validationCompleteUserData } from "../helpers/validations";
-import useForm from "../hooks/useFormHook";
+import avatar from '@assets/avatar.svg';
+import doodle from '@assets/doodle-4 1.svg';
+import doodle2 from '@assets/doodle-5 1.svg';
+import maskGroup from '@assets/Mask group.svg';
+import saly from '@assets/Saly-30.svg';
+import { useEffect } from 'react';
+import { FaEyeSlash } from 'react-icons/fa';
+import { TbEditCircle } from 'react-icons/tb';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { COMPLETE_USER_DATA_INITIAL_VALUES } from '../constants';
+import { updateUser } from '../features/auth/authSlice';
+import { getRoles } from '../features/roles/rolesSlice';
+import { validationCompleteUserData } from '../helpers/validations';
+import useForm from '../hooks/useFormHook';
 
 const CompleteUserDataPage = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ const CompleteUserDataPage = () => {
   const { formErrors, handleChange, handleSubmit, values } = useForm(
     COMPLETE_USER_DATA_INITIAL_VALUES,
     updateUser,
-    validationCompleteUserData
+    validationCompleteUserData,
   );
 
   useEffect(() => {

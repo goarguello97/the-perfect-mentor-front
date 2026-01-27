@@ -1,9 +1,9 @@
-import saly24 from "@assets/Saly-24.svg";
-import saly30 from "@assets/Saly-30.svg";
-import Chart from "chart.js/auto";
-import { useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getUserPerMonth } from "../features/users/usersSlice";
+import saly24 from '@assets/Saly-24.svg';
+import saly30 from '@assets/Saly-30.svg';
+import Chart from 'chart.js/auto';
+import { useEffect, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { getUserPerMonth } from '../features/users/usersSlice';
 
 const StadisticsPage = () => {
   const dispatch = useAppDispatch();
@@ -20,33 +20,33 @@ const StadisticsPage = () => {
       if (chartInstanceRefMobile.current) {
         chartInstanceRefMobile.current.destroy();
       }
-      const ctx = chartRefMobile.current.getContext("2d");
+      const ctx = chartRefMobile.current.getContext('2d');
       if (!ctx) return;
 
       const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, "#BFD732");
-      gradient.addColorStop(1, "#39B54A");
+      gradient.addColorStop(0, '#BFD732');
+      gradient.addColorStop(1, '#39B54A');
 
       chartInstanceRefMobile.current = new Chart(chartRefMobile.current, {
-        type: "bar",
+        type: 'bar',
         data: {
           labels: [
-            "Ene",
-            "Feb",
-            "Mar",
-            "Abr",
-            "May",
-            "Jun",
-            "Jul",
-            "Ago",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dic",
+            'Ene',
+            'Feb',
+            'Mar',
+            'Abr',
+            'May',
+            'Jun',
+            'Jul',
+            'Ago',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dic',
           ],
           datasets: [
             {
-              label: "Registros",
+              label: 'Registros',
               data: info?.months.map((inf) => {
                 return inf.newUsers.total;
               }) as any,
@@ -72,18 +72,18 @@ const StadisticsPage = () => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: "#444444",
+                color: '#444444',
                 font: {
                   size: 12,
                 },
               },
               grid: {
-                color: "#4444444D",
+                color: '#4444444D',
               },
             },
             x: {
               ticks: {
-                color: "#444444",
+                color: '#444444',
                 maxRotation: 90,
                 minRotation: 90,
                 font: {
@@ -104,33 +104,33 @@ const StadisticsPage = () => {
       if (chartInstanceRefDesktop.current) {
         chartInstanceRefDesktop.current.destroy();
       }
-      const ctx = chartRefDesktop.current.getContext("2d");
+      const ctx = chartRefDesktop.current.getContext('2d');
       if (!ctx) return;
 
       const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, "#BFD732");
-      gradient.addColorStop(1, "#39B54A");
+      gradient.addColorStop(0, '#BFD732');
+      gradient.addColorStop(1, '#39B54A');
 
       chartInstanceRefDesktop.current = new Chart(chartRefDesktop.current, {
-        type: "bar",
+        type: 'bar',
         data: {
           labels: [
-            "Ene",
-            "Feb",
-            "Mar",
-            "Abr",
-            "May",
-            "Jun",
-            "Jul",
-            "Ago",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dic",
+            'Ene',
+            'Feb',
+            'Mar',
+            'Abr',
+            'May',
+            'Jun',
+            'Jul',
+            'Ago',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dic',
           ],
           datasets: [
             {
-              label: "Registros",
+              label: 'Registros',
               data: info?.months.map((inf) => {
                 return inf.newUsers.total;
               }) as any,
@@ -156,18 +156,18 @@ const StadisticsPage = () => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: "#444444",
+                color: '#444444',
                 font: {
                   size: 12,
                 },
               },
               grid: {
-                color: "#4444444D",
+                color: '#4444444D',
               },
             },
             x: {
               ticks: {
-                color: "#444444",
+                color: '#444444',
                 maxRotation: 90,
                 minRotation: 90,
                 font: {

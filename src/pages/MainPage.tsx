@@ -1,10 +1,10 @@
-import doodle2 from "@assets/doodle-4 1.svg";
-import doodle from "@assets/doodle-5 1.svg";
-import ellipseImage from "@assets/Ellipse 15.svg";
-import salyImage from "@assets/Saly-1.svg";
-import salybug from "@assets/Saly-30.svg";
-import tmpLogo from "@assets/TPM.svg";
-import { Link } from "react-router-dom";
+import doodle2 from '@assets/doodle-4 1.svg';
+import doodle from '@assets/doodle-5 1.svg';
+import ellipseImage from '@assets/Ellipse 15.svg';
+import salyImage from '@assets/Saly-1.svg';
+import salybug from '@assets/Saly-30.svg';
+import tmpLogo from '@assets/TPM.svg';
+import { Link } from 'react-router-dom';
 
 const MainPage = () => {
   return (

@@ -1,42 +1,42 @@
 export const REGISTER_INITIAL_VALUES = {
-  username: "",
-  email: "",
-  password: "",
+  username: '',
+  email: '',
+  password: '',
 };
 
 export const LOGIN_INITIAL_VALUES = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 };
 
 export const RECOVER_PASS_INITIAL_VALUES = {
-  email: "",
+  email: '',
 };
 
 export const UPDATE_PASS_INITIAL_VALUES = {
-  password: "",
+  password: '',
 };
 
 export const SEARCH_PASS_INITIAL_VALUES = {
   age: false,
-  search: "",
+  search: '',
   verify: false,
 };
 
 export const COMPLETE_USER_DATA_INITIAL_VALUES = {
-  name: "",
-  lastname: "",
-  date: "",
-  country: "",
-  role: "",
+  name: '',
+  lastname: '',
+  date: '',
+  country: '',
+  role: '',
 };
 
 export const CHAT_INITIAL_VALUES = {
-  content: "",
+  content: '',
 };
 
 export const REPORT_INITIAL_VALUES = {
-  content: "",
-  receiverId: "",
-  issue:""
-}
+  content: '',
+  receiverId: '',
+  issue: '',
+};

@@ -1,19 +1,19 @@
-import doodle2 from "@assets/doodle-4 1.svg";
-import doodle from "@assets/doodle-5 1.svg";
-import email from "@assets/email.svg";
-import group from "@assets/Mask group.svg";
-import password from "@assets/password.svg";
-import saly from "@assets/Saly-2.svg";
-import salybug from "@assets/Saly-30.svg";
-import tmpLogo from "@assets/TPM.svg";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BounceLoader } from "react-spinners";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { LOGIN_INITIAL_VALUES } from "../constants";
-import { loginUser, resetAuthState } from "../features/auth/authSlice";
-import { validationLogin } from "../helpers/validations";
-import useHook from "../hooks/useFormHook";
+import doodle2 from '@assets/doodle-4 1.svg';
+import doodle from '@assets/doodle-5 1.svg';
+import email from '@assets/email.svg';
+import group from '@assets/Mask group.svg';
+import password from '@assets/password.svg';
+import saly from '@assets/Saly-2.svg';
+import salybug from '@assets/Saly-30.svg';
+import tmpLogo from '@assets/TPM.svg';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { LOGIN_INITIAL_VALUES } from '../constants';
+import { loginUser, resetAuthState } from '../features/auth/authSlice';
+import { validationLogin } from '../helpers/validations';
+import useHook from '../hooks/useFormHook';
 
 const LoginPage = () => {
   const dispatch = useAppDispatch();
@@ -23,18 +23,18 @@ const LoginPage = () => {
   const { values, handleChange, handleSubmit, formErrors } = useHook(
     LOGIN_INITIAL_VALUES,
     loginUser,
-    validationLogin
+    validationLogin,
   );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    if (status.login == "failed" || status.persistance == "failed") {
+    if (status.login == 'failed' || status.persistance == 'failed') {
       timer = setTimeout(() => {
         dispatch(resetAuthState());
       }, 5000);
-    } else if (status.login == "succeeded") {
+    } else if (status.login == 'succeeded') {
       timer = setTimeout(() => {
-        navigate("/users");
+        navigate('/users');
       }, 1000);
     }
 
@@ -135,21 +135,21 @@ const LoginPage = () => {
             </div>
           </div>
         )}
-        {status.login == "failed" && (
+        {status.login == 'failed' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">{errors.login}</p>
             </div>
           </div>
         )}
-        {status.persistance == "failed" && (
+        {status.persistance == 'failed' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <div className="w-[315px] h-auto min-h-[100px] bg-[#444444] rounded-[40px] flex items-center justify-center text-white">
               <p className="p-3!">{errors.persistance}</p>
             </div>
           </div>
         )}
-        {status.login == "loading" && (
+        {status.login == 'loading' && (
           <div className="absolute w-dvw h-dvh left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-[#FFFFFF90] z-30">
             <BounceLoader color="#39B54A" />
           </div>
@@ -257,21 +257,21 @@ const LoginPage = () => {
               </div>
             </div>
           )}
-          {status.login == "failed" && (
+          {status.login == 'failed' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
                 <p className="p-3!">{errors.login}</p>
               </div>
             </div>
           )}
-          {status.persistance == "failed" && (
+          {status.persistance == 'failed' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <div className="w-[50%] h-auto min-h-[100px] flex items-center justify-center bg-[#444444] p-3! rounded-[40px] text-white">
                 <p className="p-3!">{errors.persistance}</p>
               </div>
             </div>
           )}
-          {status.login == "loading" && (
+          {status.login == 'loading' && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-dvw h-dvh flex items-center justify-center bg-[#FFFFFF90] z-20">
               <BounceLoader color="#39B54A" />
             </div>
