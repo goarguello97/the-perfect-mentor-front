@@ -3,7 +3,9 @@ import doodle from "@assets/doodle-4 1.svg";
 import { useEffect, useState } from "react";
 import { FaRegDotCircle } from "react-icons/fa";
 import { GoDot } from "react-icons/go";
+import { GrView } from "react-icons/gr";
 import { IoSearchOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import ReporModal from "../components/ReportModal";
 import { getReports } from "../features/reports/reportSlice";
@@ -79,7 +81,8 @@ const ReportsPage = () => {
           
 
           {reports?.map((report, i) => (
-            <div className={`w-[calc(100%-40px)] h-[119px] ${report.answered ? "bg-[#39B54A1A]" : "bg-[#E615871A]"} rounded-[20px] relative flex flex-col items-start justify-center p-[15px]!`}>
+            report.receiverId._id === user?._id && (
+              <div key={i} className={`w-[calc(100%-40px)] h-[119px] ${report.answered ? "bg-[#39B54A1A]" : "bg-[#E615871A]"} rounded-[20px] relative flex flex-col items-start justify-center p-[15px]!`}>
               <div className={`w-[4px] h-[77px] absolute ${report.answered? "bg-[#39B54A]" : "bg-[#E61587]"} rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}></div>
               <div className={`w-auto h-[30px] absolute rounded-[40px] ${report.answered? "bg-[#39B54A33]" : "bg-[#E6158733]"} right-[15px] top-[15px] px-[10px]! flex items-center`}>
               <span className={`text-[12px] leading-[100%] ${report.answered? "text-[#39B54A]" : "text-[#E61587]"}`}>
@@ -99,6 +102,7 @@ const ReportsPage = () => {
               <span className="font-bold">Fecha ingreso:</span> {formatDate(report.createdAt)}
             </p>
           </div>
+            )
           ))}
         </div>
       </div>
@@ -166,7 +170,8 @@ const ReportsPage = () => {
                   <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[6px]">
                  
                     {reports?.map((report, i) => (
-                      <div className={`h-[60px] ${report.answered? "bg-[#39B54A1A]" : "bg-[#E615871A]"} grid grid-cols-6 items-center`}>
+                      report.receiverId._id === user?._id && (
+                        <div key={i} className={`h-[60px] ${report.answered? "bg-[#39B54A1A]" : "bg-[#E615871A]"} grid grid-cols-6 items-center relative`}>
                       <div className="text-[14px] font-normal text-[#444444] text-center relative">
                         <div className={`w-[4px] h-[40px] font-bold absolute ${report.answered? "bg-[#39B54A]" : "bg-[#E61587]" }  rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}></div>
                         {report.receiverId.fullname}
@@ -191,7 +196,10 @@ const ReportsPage = () => {
                           <div className={`w-[6px] h-[6px] ${report.answered? "bg-[#39B54A]" : "bg-[#E61587]"} rounded-full ms-[5px]!`}></div>
                         </div>
                       </div>
-                    </div>
+                      <Link to={`/reports/${report._id}`} className="absolute right-3 cursor-pointer hover:bg-white hover:opacity-50 hover:rounded-full">
+                      <GrView size={32} />
+                      </Link></div>
+                      )
                     ))}
                   </div>
 
