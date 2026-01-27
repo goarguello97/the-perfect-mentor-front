@@ -48,7 +48,23 @@ export const getReports = createAsyncThunk("reports/getReports", async (_, thunk
         return response.data
     } catch  (error: any) {
       const errorMessage =
-        error.response?.data || error.message || "Error al enviar el mensaje";
+        error.response?.data || error.message || "Error al recibir los reportes";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+})
+
+export const getReport = createAsyncThunk("reports/getReport", async (data:{id:string}, thunkAPI) => {
+    try {
+const {id} = data
+
+       if(!id)  throw new Error("Id del reporte inválido")
+
+        const response = await axiosInstance.get(`/reports/report/${id}`);
+
+        return response.data
+    } catch  (error: any) {
+      const errorMessage =
+        error.response?.data || error.message || "Error al recibir el reporte";
       return thunkAPI.rejectWithValue(errorMessage);
     }
 })
@@ -66,7 +82,7 @@ export const addReport = createAsyncThunk("reports/addReports", async (data:{rec
 
     } catch (error: any) {
       const errorMessage =
-        error.response?.data || error.message || "Error al enviar el mensaje";
+        error.response?.data || error.message || "Error al añadir el reporte";
       return thunkAPI.rejectWithValue(errorMessage);
      }
 })
@@ -77,7 +93,7 @@ export const putReport = createAsyncThunk("reports/putReports", async (data:{rep
         return response.data
     } catch(error: any) {
       const errorMessage =
-        error.response?.data || error.message || "Error al enviar el mensaje";
+        error.response?.data || error.message || "Error al actualizar el reporte";
       return thunkAPI.rejectWithValue(errorMessage);
      }
 })
@@ -85,12 +101,12 @@ export const putReport = createAsyncThunk("reports/putReports", async (data:{rep
 export const answerReport = createAsyncThunk("reports/answerReport", async (data:{reportId:string}, thunkAPI) => {
     try {
         
-const response = await axiosInstance.put(`/reports/${data.reportId}`)
+const response = await axiosInstance.patch(`/reports/${data.reportId}`)
 
         return response.data
     } catch (error: any) {
       const errorMessage =
-        error.response?.data || error.message || "Error al enviar el mensaje";
+        error.response?.data || error.message || "Error al responder el reporte";
       return thunkAPI.rejectWithValue(errorMessage);
      }
 })
@@ -112,6 +128,18 @@ const reportSlice = createSlice({
         state.status.reports = "failed";
         state.errors.reports = action.payload as string;
         })
+        .addCase(
+          getReport.pending, (state) => {
+              state.status.report = "loading";
+          })
+          .addCase(getReport.fulfilled, (state, action) => {
+          state.status.report = "succeeded";
+          state.report = action.payload
+          })
+          .addCase(getReport.rejected, (state, action) => {
+          state.status.report = "failed";
+          state.errors.report = action.payload as string;
+          })
         .addCase(addReport.pending, (state) => {
             state.status.report = "loading";
         })

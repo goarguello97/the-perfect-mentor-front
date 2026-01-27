@@ -6,7 +6,7 @@ import { addReport } from "../features/reports/reportSlice";
 import { reportValidation } from "../helpers/validations";
 import useForm from "../hooks/useFormHook";
 
-const ReporModal = ({ isOpen, onClose, onSubmit, children }) => {
+const ReporModal = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
   const { errors, status, matches } = useAppSelector((state) => state.matches);
 
@@ -31,7 +31,7 @@ const ReporModal = ({ isOpen, onClose, onSubmit, children }) => {
             </svg>
           </button>
           </div>
-          <form onSubmit={onSubmit} className="flex flex-col w-full flex-1 items-center justify-center">
+          <form onSubmit={handleSubmit} className="flex flex-col w-full flex-1 items-center justify-center">
           <label className="text-[15px] text-[#3A3D46] w-[calc(100%-10px)] mb-[10px]!">Destinatario: <br />
             <select name="user" id="" className="font-bold text-[15px] text-[#444444] bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] w-full  h-[30px] mt-[5px]! px-[20px]"></select>
           </label>

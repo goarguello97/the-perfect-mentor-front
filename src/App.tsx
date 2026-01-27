@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import ProfilePage from "./pages/ProfilePage";
 import RecoverPasswordPage from "./pages/RecoverPasswordPage";
+import ReportPage from "./pages/ReportPage";
 import ReportsPage from "./pages/ReportsPage";
 import SignUpPage from "./pages/SignUpPage";
 import StadisticsPage from "./pages/StadisticsPage";
@@ -82,6 +83,7 @@ function App() {
           }
         />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/reports/:id" element={<ReportPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/activate/:token" element={<ActivateUserPage />} />
         <Route path="/recover" element={<RecoverPasswordPage />} />
