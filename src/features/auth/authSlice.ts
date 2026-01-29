@@ -8,7 +8,7 @@ import axiosInstance from '../../config/axiosInstance';
 import { auth } from '../../firebase/firebase';
 import { firebaseErrorSpa } from './firebaseErrors';
 
-interface User {
+export interface User {
   _id: string;
   id: string;
   name: string;
@@ -19,7 +19,7 @@ interface User {
   country: string;
   email: string;
   mentor: any[];
-  role: { role: string };
+  role: { role: string; _id: string };
   md: any[];
   matchReq: any[];
   matchSend: any[];
@@ -178,7 +178,12 @@ export const validationUser = createAsyncThunk(
         user: response.data,
       };
     } catch (error: any) {
-      await signOut(auth);
+      if (
+        error?.message !== 'TOKEN_EXPIRED' &&
+        error.response?.status === 401
+      ) {
+        await signOut(auth);
+      }
 
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
@@ -284,7 +289,7 @@ export const updateUser = createAsyncThunk(
 
       if (!user) throw new Error('Usuario no autenticado');
 
-      const token = user.getIdToken();
+      const token = await user.getIdToken();
 
       if (!token) {
         throw new Error('No hay token de autenticación disponible');
@@ -294,11 +299,28 @@ export const updateUser = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (response.data.customToken) {
+        const { signInWithCustomToken } = await import('firebase/auth');
+
+        // Esto "limpia" la sesión rota y pone una nueva basada en el UID
+        // sin que el usuario tenga que poner su clave.
+        const userCredential = await signInWithCustomToken(
+          auth,
+          response.data.customToken,
+        );
+
+        // Ahora que la sesión es nueva, obtenemos el token real
+        const newToken = await userCredential.user.getIdToken();
+
+        // Actualizamos nuestro estado global
+        thunkAPI.dispatch(validationUser(newToken));
+      }
+
       return response.data;
     } catch (error: any) {
       const errorMessage =
-        (firebaseErrorSpa.hasOwnProperty(error.code) &&
-          firebaseErrorSpa[error.code]) ||
+        (firebaseErrorSpa.hasOwnProperty(error.response.data.code) &&
+          (firebaseErrorSpa[error.response.data.code] as string)) ||
         error.response?.data ||
         error.message;
       return thunkAPI.rejectWithValue(errorMessage);
@@ -319,6 +341,11 @@ const authSlice = createSlice({
       state.token = null;
       state.isPersisted = false;
     },
+    resetErrors: (state) => ({
+      ...state,
+      errors: { ...state.errors, updateUser: null },
+      status: { ...state.status, updateUser: 'idle' },
+    }),
   },
   extraReducers: (builder) => {
     builder
@@ -434,5 +461,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuthState, logout } = authSlice.actions;
+export const { resetAuthState, logout, resetErrors } = authSlice.actions;
 export default authSlice.reducer;

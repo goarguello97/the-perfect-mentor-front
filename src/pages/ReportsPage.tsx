@@ -106,6 +106,12 @@ const ReportsPage = () => {
                       className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${report.answered ? 'bg-[#39B54A]' : 'bg-[#E61587]'}`}
                     ></div>
                   </div>
+                  <Link
+                    to={`/reports/${report._id}`}
+                    className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:bg-white hover:opacity-50 hover:rounded-full"
+                  >
+                    <GrView size={32} />
+                  </Link>
 
                   <span className="text-[14px] font-bold text-[#444444]">
                     {report.receiverId.fullname}
