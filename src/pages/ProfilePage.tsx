@@ -5,8 +5,29 @@ import maskGroup from '@assets/Mask group.svg';
 import saly from '@assets/Saly-30.svg';
 import { FaEyeSlash } from 'react-icons/fa';
 import { TbEditCircle } from 'react-icons/tb';
+import { useAppSelector } from '../app/hooks';
+import { useState } from 'react';
 
 const ProfilePage = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const [edit, setEdit] = useState(false);
+
+  const calculateAge = (birthDate: string): number => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden relative">
@@ -122,68 +143,81 @@ const ProfilePage = () => {
               />
             </div>
 
-            <button className="w-auto h-[35px] flex items-center justify-center mt-[128px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold">
+            <button
+              className="w-auto h-[35px] flex items-center justify-center mt-[128px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+              onClick={() => {
+                setEdit(!edit);
+              }}
+            >
               Editar{' '}
               <TbEditCircle size={18} color="#44444490" className="ms-[9px]!" />
             </button>
 
-            <form className="w-[calc(100%-40px)] mt-[20px]! flex flex-col items-start justify-center">
-              <label className="text-[12px] text-[#3A3D46] w-full">
-                Tu nombre: <br />
-                <input
-                  className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
-                  type="text"
-                  placeholder="David Gordon"
-                  name="name"
-                />
-                <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
-              </label>
-              <label className="text-[12px] text-[#3A3D46] w-full">
-                Tu email: <br />
-                <input
-                  className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
-                  type="text"
-                  placeholder="davidgordon@gmail.com"
-                  name="email"
-                />
-                <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
-              </label>
-              <label className="text-[12px] text-[#3A3D46] w-full relative">
-                Tu contraseña: <br />
-                <input
-                  className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
-                  type="password"
-                  placeholder="********"
-                  name="password"
-                />
-                <FaEyeSlash
-                  size={14}
-                  color="#444444"
-                  className="absolute top-1/2 -translate-y-1/2 right-[5.5px]"
-                />
-                <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
-              </label>
-              <label className="text-[12px] text-[#3A3D46] w-full">
-                Edad: <br />
-                <input
-                  className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
-                  type="number"
-                  placeholder="35"
-                  name="age"
-                />
-                <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
-              </label>
-              <label className="text-[12px] text-[#3A3D46] w-full">
-                Rol: <br />
-                <input
-                  className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
-                  type="text"
-                  placeholder="Mentor"
-                  name="rol"
-                />
-                <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
-              </label>
-            </form>
+            {user ? (
+              <form className="w-[calc(100%-40px)] mt-[20px]! flex flex-col items-start justify-center">
+                <label className="text-[12px] text-[#3A3D46] w-full">
+                  Tu nombre: <br />
+                  <input
+                    className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    type="text"
+                    placeholder={user.fullname}
+                    name="name"
+                    disabled={edit}
+                  />
+                  <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
+                </label>
+                <label className="text-[12px] text-[#3A3D46] w-full">
+                  Tu email: <br />
+                  <input
+                    className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    type="text"
+                    placeholder={user.email}
+                    name="email"
+                    disabled={edit}
+                  />
+                  <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
+                </label>
+                <label className="text-[12px] text-[#3A3D46] w-full relative">
+                  Tu contraseña: <br />
+                  <input
+                    className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    type="password"
+                    placeholder="********"
+                    name="password"
+                  />
+                  <FaEyeSlash
+                    size={14}
+                    color="#444444"
+                    className="absolute top-1/2 -translate-y-1/2 right-[5.5px]"
+                  />
+                  <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
+                </label>
+                <label className="text-[12px] text-[#3A3D46] w-full">
+                  Edad: <br />
+                  <input
+                    className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    type="number"
+                    placeholder={calculateAge(user.date).toString()}
+                    name="age"
+                  />
+                  <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
+                </label>
+                <label className="text-[12px] text-[#3A3D46] w-full">
+                  Rol: <br />
+                  <input
+                    className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    type="text"
+                    placeholder={
+                      user.role.role.charAt(0).toUpperCase() +
+                      user.role.role.slice(1).toLowerCase()
+                    }
+                    name="rol"
+                    disabled={edit}
+                  />
+                  <div className="w-full border-b border-[#4444444D] mb-[15px]!"></div>
+                </label>
+              </form>
+            ) : null}
           </div>
         </div>
       </div>
