@@ -125,7 +125,7 @@ const ChatBar = () => {
   return (
     <>
       <div
-        className="md:hidden fixed top-[15px] right-[15px] w-auto px-[10px]! py-[4px]! bg-[#CCCCCC] rounded-[40px] shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-40"
+        className="md:hidden fixed top-[80dvh] left-[15px] w-auto px-[10px]! py-[4px]! bg-[#CCCCCC] rounded-[40px] shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-40"
         onClick={() => setView(!view)}
       >
         <CiChat1 size={40} />

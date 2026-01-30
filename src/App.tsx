@@ -34,12 +34,14 @@ function App() {
   return (
     <>
       {shouldShowBar && (
-        <PrivateRoute>
-          <Navbar />
-        </PrivateRoute>
+        <>
+          <PrivateRoute>
+            <Navbar />
+          </PrivateRoute>
+          <ChatWindow />
+          <ChatBar />
+        </>
       )}
-      <ChatWindow />
-      <ChatBar />
       <Routes>
         <Route
           path="/"

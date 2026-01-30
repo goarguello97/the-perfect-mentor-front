@@ -8,6 +8,8 @@ import { TbUsersPlus } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../app/hooks';
 import { logoutUser } from '../features/auth/authSlice';
+import ChatWindow from './ChatWindow';
+import ChatBar from './ChatBar';
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
