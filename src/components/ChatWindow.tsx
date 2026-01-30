@@ -93,7 +93,7 @@ const MessageList = React.memo(() => {
 
   return (
     <>
-      <div className="md:hidden fixed flex bottom-[120px] w-[calc(100%-20px)] left-1/2 -translate-x-1/2 h-[400px] max-h-[60dvh] bg-white rounded-t-[20px] flex-col pb-4! shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-40">
+      <div className="md:hidden fixed flex bottom-[120px] w-[calc(100%-20px)] left-1/2 -translate-x-1/2 h-[400px] max-h-[60dvh] bg-white rounded-t-[20px] flex-col pb-4! shadow-[0px_0px_0px_0px_#0013331A,0px_2px_5px_0px_#0013331A,0px_9px_9px_0px_#00133317,0px_21px_13px_0px_#0013330D,0px_38px_15px_0px_#00133303,0px_59px_17px_0px_#00133300] z-50">
         <div className="bg-[#444444] p-3! text-[#BFD732] flex justify-between rounded-t-[20px]">
           <span>{activeChatUser.fullname}</span>
           <button
@@ -245,7 +245,7 @@ const ChatInput = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="p-2! border-t border-[#444444] md:hidden flex fixed w-[calc(100%-20px)] left-1/2 -translate-x-1/2 h-[50px] bottom-[82px] bg-white z-40"
+        className="p-2! border-t border-[#444444] md:hidden flex fixed w-[calc(100%-20px)] left-1/2 -translate-x-1/2 h-[50px] bottom-[82px] bg-white z-50"
       >
         <input
           value={values.content}
