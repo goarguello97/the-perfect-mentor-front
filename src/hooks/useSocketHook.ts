@@ -83,7 +83,6 @@ export const useSocket = (userId: string | undefined) => {
 
       if (activeUserRef.current?._id !== data.senderId) {
         dispatch(getUserMessages({ userId }));
-        //dispatch(incrementUnreadCount(data.senderId))
         Swal.fire({
           title: 'Nuevo mensaje',
           text: `${data.from}: ${data.content}`,
@@ -108,7 +107,7 @@ export const useSocket = (userId: string | undefined) => {
           },
         });
       } else {
-        dispatch(addMessage(data));
+        dispatch(getUserMessages({ userId }));
       }
     });
 

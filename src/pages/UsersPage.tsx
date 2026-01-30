@@ -14,11 +14,7 @@ import { TbEditCircle } from 'react-icons/tb';
 import Swal from 'sweetalert2';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { SEARCH_PASS_INITIAL_VALUES } from '../constants';
-import {
-  getMessages,
-  resetUnreadCount,
-  setActiveChat,
-} from '../features/chat/chatSlice';
+import { getMessages, setActiveChat } from '../features/chat/chatSlice';
 import {
   getMatches,
   getMatchesReq,
@@ -659,7 +655,6 @@ const UsersPage = () => {
                                           }),
                                         );
                                         dispatch(setActiveChat(user));
-                                        dispatch(resetUnreadCount(user!._id));
                                       }}
                                     >
                                       <TbEditCircle size={32} />

@@ -160,16 +160,6 @@ const chatSlice = createSlice({
         state.messages.push(msg);
       }
     },
-    // incrementUnreadCount: (state, action) => {
-    //   if (state.unreadMessages[action.payload]) {
-    //     state.unreadMessages[action.payload]++;
-    //   } else {
-    //     state.unreadMessages[action.payload] = 1;
-    //   }
-    // },
-    // resetUnreadCount: (state, action) => {
-    //   state.unreadMessages[action.payload] = 0;
-    // }
   },
   extraReducers: (builder) =>
     builder
@@ -178,7 +168,10 @@ const chatSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.status.activeChatUser = 'succeeded';
-        state.messages.push(action.payload);
+        const exists = state.messages.some((m) => m._id === action.payload._id);
+        if (!exists) {
+          state.messages.push(action.payload);
+        }
       })
       .addCase(sendMessage.rejected, (state) => {
         state.status.activeChatUser = 'failed';
@@ -190,7 +183,8 @@ const chatSlice = createSlice({
         state.status.chats = 'succeeded';
         state.chats = action.payload;
         state.unreadMessages = action.payload.reduce(
-          (acc, chat) => acc + chat.unreadCount,
+          (acc: number, chat: { unreadCount: number }) =>
+            acc + chat.unreadCount,
           0,
         );
       })
@@ -209,13 +203,7 @@ const chatSlice = createSlice({
       }),
 });
 
-export const {
-  addMessage,
-  closeChat,
-  setActiveChat,
-  receiveMessage,
-  incrementUnreadCount,
-  resetUnreadCount,
-} = chatSlice.actions;
+export const { addMessage, closeChat, setActiveChat, receiveMessage } =
+  chatSlice.actions;
 
 export default chatSlice.reducer;
