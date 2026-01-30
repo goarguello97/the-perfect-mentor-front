@@ -40,28 +40,27 @@ const ReportPage = () => {
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const chatContainerMobRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(()=>{
-    setValues(REPORT_MESSAGE_INITIAL_VALUES)
-  },[report?.messages])
+  useEffect(() => {
+    setValues(REPORT_MESSAGE_INITIAL_VALUES);
+  }, [report?.messages]);
 
   useEffect(() => {
     const scrollContainer = chatContainerMobRef.current;
     if (scrollContainer && report) {
-      if(report?.messages.length > 0){
-        
-      if (isInitialMobLoad.current) {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: 'auto',
-        });
-        isInitialMobLoad.current = false;
-      } else {
-        scrollContainer?.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: 'smooth',
-        });
+      if (report?.messages.length > 0) {
+        if (isInitialMobLoad.current) {
+          scrollContainer.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'auto',
+          });
+          isInitialMobLoad.current = false;
+        } else {
+          scrollContainer?.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
       }
-    }
     }
 
     return () => {
@@ -69,30 +68,29 @@ const ReportPage = () => {
     };
   }, [report?.messages]);
 
-useEffect(() => {
-  const scrollContainer = chatContainerRef.current;
-  if (scrollContainer && report) {
-    if(report?.messages.length > 0){
-    if (isInitialLoad.current) {
-      scrollContainer.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: 'auto',
-      });
-      isInitialLoad.current = false;
-    } else {
-      scrollContainer?.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: 'smooth',
-      });
-    }}
-  }
+  useEffect(() => {
+    const scrollContainer = chatContainerRef.current;
+    if (scrollContainer && report) {
+      if (report?.messages.length > 0) {
+        if (isInitialLoad.current) {
+          scrollContainer.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'auto',
+          });
+          isInitialLoad.current = false;
+        } else {
+          scrollContainer?.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }
+    }
 
-  return () => {
-    isInitialLoad.current = true;
-  };
-}, [report?.messages]);
-
-
+    return () => {
+      isInitialLoad.current = true;
+    };
+  }, [report?.messages]);
 
   useEffect(() => {
     if (user && id) dispatch(getReport({ id }));
@@ -116,42 +114,45 @@ useEffect(() => {
                 {report.senderId.fullname}
               </p>
             </header>
-            <div ref={chatContainerMobRef} className="w-[calc(100%-20px)] mx-[10px] mt-[35px]! pt-[20px]! flex-1 bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col justify-start gap-[5px] px-[20px]! pb-[92px]!">
-            {report.messages?.map((message: any, i: number) => {
-                      const isMe = message.authorId === user?._id;
+            <div
+              ref={chatContainerMobRef}
+              className="w-[calc(100%-20px)] mx-[10px] mt-[35px]! pt-[20px]! flex-1 bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col justify-start gap-[5px] px-[20px]! pb-[92px]!"
+            >
+              {report.messages?.map((message: any, i: number) => {
+                const isMe = message.authorId === user?._id;
 
-                      const messageDate = new Date(message.createdAt);
-                      const timeString = messageDate.toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      });
+                const messageDate = new Date(message.createdAt);
+                const timeString = messageDate.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
 
-                      const previousMessage = report.messages[i - 1];
-                      const previousDate = previousMessage
-                        ? new Date(previousMessage.createdAt)
-                        : null;
-                      const previousTimeSTring = previousDate
-                        ? previousDate.toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })
-                        : null;
+                const previousMessage = report.messages[i - 1];
+                const previousDate = previousMessage
+                  ? new Date(previousMessage.createdAt)
+                  : null;
+                const previousTimeSTring = previousDate
+                  ? previousDate.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : null;
 
-                      const showTime = timeString !== previousTimeSTring;
+                const showTime = timeString !== previousTimeSTring;
 
-                      return (
-                        <div
-                          key={i}
-                          className={`flex flex-col mb-1 ${isMe ? 'items-end' : 'items-start'}`}
-                        >
-                          {showTime && (
-                            <span className="w-full text-center text-[10px] text-gray-400 my-2 uppercase font-semibold tracking-wider">
-                              {timeString}
-                            </span>
-                          )}
+                return (
+                  <div
+                    key={i}
+                    className={`flex flex-col mb-1 ${isMe ? 'items-end' : 'items-start'}`}
+                  >
+                    {showTime && (
+                      <span className="w-full text-center text-[10px] text-gray-400 my-2 uppercase font-semibold tracking-wider">
+                        {timeString}
+                      </span>
+                    )}
 
-                          <div
-                            className={`
+                    <div
+                      className={`
           relative max-w-[80%] px-4 py-2 rounded-xl shadow-sm
           ${
             isMe
@@ -159,32 +160,32 @@ useEffect(() => {
               : 'bg-[#F5F6F7] text-[#444444] rounded-tl-none p-[4px]!'
           }
         `}
-                          >
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                              {message.content}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-<form
-                    onSubmit={handleSubmit}
-                    className="w-full flex flex-col mt-[20px]!"
-                  >
-                    <textarea
-                      className="h-auto bg-[#F5F6F7] shadow-[0px_4px_4px_0px_#44444440] rounded-[40px] mb-[20px]! p-[30px]!"
-                      name="content"
-                      value={values.content}
-                      onChange={handleChange}
-                      required
-                    ></textarea>
-                    <button
-                      type="submit"
-                      className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[40px] text-white font-bold text-[15px] mb-[10px]! z-10 cursor-pointer self-end"
                     >
-                      Enviar
-                    </button>
-                  </form>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+              <form
+                onSubmit={handleSubmit}
+                className="w-full flex flex-col mt-[20px]!"
+              >
+                <textarea
+                  className="h-auto bg-[#F5F6F7] shadow-[0px_4px_4px_0px_#44444440] rounded-[40px] mb-[20px]! p-[30px]!"
+                  name="content"
+                  value={values.content}
+                  onChange={handleChange}
+                  required
+                ></textarea>
+                <button
+                  type="submit"
+                  className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[40px] text-white font-bold text-[15px] mb-[10px]! z-10 cursor-pointer self-end"
+                >
+                  Enviar
+                </button>
+              </form>
 
               <Toggle reportStatus={report.status} reportId={report._id} />
             </div>
@@ -218,7 +219,9 @@ useEffect(() => {
                   />
 
                   <div
-          ref={chatContainerRef} className="flex-1 min-h-0 flex flex-col justify-start gap-[6px] text-[#444444] p-[30px]! z-30 overflow-y-auto">
+                    ref={chatContainerRef}
+                    className="flex-1 min-h-0 flex flex-col justify-start gap-[6px] text-[#444444] p-[30px]! z-30 overflow-y-auto"
+                  >
                     {report.messages?.map((message: any, i: number) => {
                       const isMe = message.authorId === user?._id;
 

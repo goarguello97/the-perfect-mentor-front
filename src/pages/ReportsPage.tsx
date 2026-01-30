@@ -43,7 +43,6 @@ const ReportsPage = () => {
   useEffect(() => {
     if (user) dispatch(getReports());
   }, [dispatch, user]);
-  console.log(reports);
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden">

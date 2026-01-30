@@ -252,8 +252,8 @@ const reportSlice = createSlice({
       })
       .addCase(answerReport.fulfilled, (state, action) => {
         state.status.responseReport = 'succeeded';
-        if(state.report){          
-        state.report.status = action.payload.status;
+        if (state.report) {
+          state.report.status = action.payload.status;
         }
       })
       .addCase(answerReport.rejected, (state, action) => {
