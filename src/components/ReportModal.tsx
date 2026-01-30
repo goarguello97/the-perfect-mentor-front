@@ -158,8 +158,8 @@ const ReporModal = ({ isOpen, onClose }) => {
               Asunto: <br />
               <input
                 type="text"
-                name="issue"
-                value={values.issue}
+                name="subject"
+                value={values.subject}
                 onChange={handleChange}
                 className="w-full h-[30px] bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] px-[20px]!"
               />
@@ -178,13 +178,13 @@ const ReporModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="border-2 border-[#444444] hover:bg-[#44444470]  rounded-full px-[20px]! h-[55px] text-[#444444] font-bold text-[15px] px-4 flex items-center justify-center cursor-pointer"
+                className="border-2 border-[#444444] hover:bg-[#44444470]  rounded-full px-[20px]! h-[55px] text-[#444444] font-bold text-[15px] flex items-center justify-center cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 px-4 flex items-center justify-center cursor-pointer"
+                className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 flex items-center justify-center cursor-pointer"
               >
                 Enviar Reporte
               </button>

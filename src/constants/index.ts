@@ -38,5 +38,9 @@ export const CHAT_INITIAL_VALUES = {
 export const REPORT_INITIAL_VALUES = {
   content: '',
   receiverId: '',
-  issue: '',
+  subject: '',
+};
+
+export const REPORT_MESSAGE_INITIAL_VALUES = {
+  content: '',
 };

@@ -43,7 +43,7 @@ const ReportsPage = () => {
   useEffect(() => {
     if (user) dispatch(getReports());
   }, [dispatch, user]);
-
+  console.log(reports);
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden">
@@ -89,21 +89,21 @@ const ReportsPage = () => {
               report.receiverId._id === user?._id && (
                 <div
                   key={i}
-                  className={`w-[calc(100%-40px)] h-[119px] ${report.answered ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} rounded-[20px] relative flex flex-col items-start justify-center p-[15px]!`}
+                  className={`w-[calc(100%-40px)] h-[119px] ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} rounded-[20px] relative flex flex-col items-start justify-center p-[15px]!`}
                 >
                   <div
-                    className={`w-[4px] h-[77px] absolute ${report.answered ? 'bg-[#39B54A]' : 'bg-[#E61587]'} rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}
+                    className={`w-[4px] h-[77px] absolute ${report.status ? 'bg-[#39B54A]' : 'bg-[#E61587]'} rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}
                   ></div>
                   <div
-                    className={`w-auto h-[30px] absolute rounded-[40px] ${report.answered ? 'bg-[#39B54A33]' : 'bg-[#E6158733]'} right-[15px] top-[15px] px-[10px]! flex items-center`}
+                    className={`w-auto h-[30px] absolute rounded-[40px] ${report.status ? 'bg-[#39B54A33]' : 'bg-[#E6158733]'} right-[15px] top-[15px] px-[10px]! flex items-center`}
                   >
                     <span
-                      className={`text-[12px] leading-[100%] ${report.answered ? 'text-[#39B54A]' : 'text-[#E61587]'}`}
+                      className={`text-[12px] leading-[100%] ${report.status ? 'text-[#39B54A]' : 'text-[#E61587]'}`}
                     >
-                      {report.answered ? 'Respondido' : 'No respondido'}
+                      {report.status ? 'Respondido' : 'No respondido'}
                     </span>{' '}
                     <div
-                      className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${report.answered ? 'bg-[#39B54A]' : 'bg-[#E61587]'}`}
+                      className={`w-[6px] h-[6px] rounded-full ms-[5px]! ${report.status ? 'bg-[#39B54A]' : 'bg-[#E61587]'}`}
                     ></div>
                   </div>
                   <Link
@@ -121,7 +121,7 @@ const ReportsPage = () => {
                     {report.receiverId.role.role.charAt().toUpperCase() +
                       report.receiverId.role.role.slice(1).toLowerCase()}{' '}
                     <br />
-                    <span className="font-bold">Motivo:</span> {report.issue}{' '}
+                    <span className="font-bold">Motivo:</span> {report.subject}{' '}
                     <br />
                     <span className="font-bold">Email:</span>{' '}
                     {report.receiverId.email}
@@ -211,16 +211,16 @@ const ReportsPage = () => {
                         report.receiverId._id === user?._id && (
                           <div
                             key={i}
-                            className={`h-[60px] ${report.answered ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} grid grid-cols-6 items-center relative`}
+                            className={`h-[60px] ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} grid grid-cols-6 items-center relative`}
                           >
                             <div className="text-[14px] font-normal text-[#444444] text-center relative">
                               <div
-                                className={`w-[4px] h-[40px] font-bold absolute ${report.answered ? 'bg-[#39B54A]' : 'bg-[#E61587]'}  rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}
+                                className={`w-[4px] h-[40px] font-bold absolute ${report.status ? 'bg-[#39B54A]' : 'bg-[#E61587]'}  rounded-r-[10px] left-0 top-1/2 -translate-y-1/2`}
                               ></div>
                               {report.receiverId.fullname}
                             </div>
                             <div className="text-[14px] text-[#444444] text-center">
-                              {report.issue}
+                              {report.subject}
                             </div>
                             <div className="text-[14px] text-[#444444] text-center">
                               {report.receiverId.role.role
@@ -238,17 +238,17 @@ const ReportsPage = () => {
                             </div>
                             <div>
                               <div
-                                className={`w-[100px] h-[20px] flex items-center justify-center ${report.answered ? 'bg-[#39B54A33]' : 'bg-[#E6158733]'} rounded-[40px] px-[7px]! mx-auto!`}
+                                className={`w-[100px] h-[20px] flex items-center justify-center ${report.status ? 'bg-[#39B54A33]' : 'bg-[#E6158733]'} rounded-[40px] px-[7px]! mx-auto!`}
                               >
                                 <span
-                                  className={`h-[20x] leading-[20px] text-[12px] ${report.answered ? 'text-[#39B54A]' : 'text-[#E61587]'}`}
+                                  className={`h-[20x] leading-[20px] text-[12px] ${report.status ? 'text-[#39B54A]' : 'text-[#E61587]'}`}
                                 >
-                                  {report.answered
+                                  {report.status
                                     ? 'Verificado'
                                     : 'No verificado'}
                                 </span>
                                 <div
-                                  className={`w-[6px] h-[6px] ${report.answered ? 'bg-[#39B54A]' : 'bg-[#E61587]'} rounded-full ms-[5px]!`}
+                                  className={`w-[6px] h-[6px] ${report.status ? 'bg-[#39B54A]' : 'bg-[#E61587]'} rounded-full ms-[5px]!`}
                                 ></div>
                               </div>
                             </div>

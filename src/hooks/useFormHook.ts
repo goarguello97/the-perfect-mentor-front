@@ -41,7 +41,7 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
     setIsSubmitting(true);
   };
 
-  const handleReset = (e: any) => {
+  const handleReset = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setValues(initialValues);
   };
