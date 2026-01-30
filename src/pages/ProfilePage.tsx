@@ -11,12 +11,21 @@ import { resetErrors, updateUser, type User } from '../features/auth/authSlice';
 import { getRoles } from '../features/roles/rolesSlice';
 import { userUpdateValidation } from '../helpers/validations';
 import useForm from '../hooks/useFormHook';
+import { useAvatarUpload } from '../hooks/useAvatarUpload';
 
 const ProfilePage = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, status } = useAppSelector((state) => state.auth);
   const { roles } = useAppSelector((state) => state.roles);
   const dispatch = useAppDispatch();
   const [edit, setEdit] = useState(true);
+
+  const {
+    file,
+    fileInputRef,
+    handleFileChange,
+    handleButtonClick,
+    handleSubmit,
+  } = useAvatarUpload(user);
 
   useEffect(() => {
     if (!roles) dispatch(getRoles());
@@ -38,13 +47,63 @@ const ProfilePage = () => {
             <TbEditCircle size={35} color="#44444490" />
           </button>
         </header>
-        <div className="w-[136px] h-[136px] absolute bg-[#94F0F0] rounded-full top-[15px] right-[31px] overflow-hidden flex items-center justify-center z-10">
-          <img
-            src={avatar}
-            alt="Avatar"
-            className="h-full object-cover rounded-full"
-          />
+        <form onSubmit={handleSubmit} className='absolute mt-[63px]! w-[calc(100%-20px)] top-[15px] right-[31px] z-20 left-1/2 -translate-x-1/2 ps-[20px]!'>
+        <div className="w-[136px] h-[136px] absolute bg-[#94F0F0] rounded-full -top-12 right-[50px] overflow-hidden flex items-center justify-center z-10">
+          {user && user.avatar ? (
+            <img
+              src={user.avatar.imageUrl}
+              alt={user.avatar.title}
+              className="h-full object-cover rounded-full"
+            />
+          ) : (
+            <img
+              src={avatar}
+              alt="Avatar"
+              className="h-full object-cover rounded-full"
+            />
+          )}
+          
         </div>
+
+        <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+
+              {!edit && (
+                <>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="w-auto text-[15px] flex items-center justify-center px-[8px]! py-[4px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+                      onClick={handleButtonClick}
+                    >
+                      {file ? 'Cambiar selección' : 'Seleccionar imagen'}
+                    </button>
+                    {file && (
+                      <p className="text-xs text-[#44444480] ps-[10px]! absolute left-full top-1/2 -translate-y-1/2">
+                        Archivo seleccionado:{' '}
+                        <span className="font-semibold">{file.name}</span>
+                      </p>
+                    )}
+                  
+
+                  <button
+                    type="submit"
+                    disabled={!file || status.uploadAvatar == 'loading'}
+                    className="w-auto text-[15px] flex items-center justify-center mt-[10px]! px-[8px]! py-[4px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+                  >
+                    {status.uploadAvatar == 'loading'
+                      ? 'Subiendo archivo...'
+                      : 'Guardar cambios'}
+                  </button>
+                  </div>
+                </>
+              )}
+        </form>
         <div className="w-[calc(100%-20px)] h-[calc(100dvh-63px)] mx-[10px] bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col items-center justify-start absolute left-1/2 bottom-0 -translate-x-1/2 overflow-y-auto">
           {user && <ProfileForm user={user} edit={edit} roles={roles} />}
         </div>
@@ -78,23 +137,75 @@ const ProfilePage = () => {
               alt="Saly"
               className="absolute w-[286px] -left-[160px] -top-[130px] -rotate-110"
             />
-            <div className="w-[136px] h-[136px] absolute bg-[#94F0F0] rounded-full -top-[28px] left-1/2 -translate-x-1/2 overflow-hidden flex items-center justify-center">
-              <img
-                src={avatar}
-                alt="Avatar"
-                className="h-full object-cover rounded-full"
+            <form
+              onSubmit={handleSubmit}
+              className="w-[200px] h-auto flex flex-col items-center justify-center relative pt-[128px]!"
+            >
+              <div className="w-[136px] h-[136px] bg-[#94F0F0] rounded-full overflow-hidden flex items-center justify-center absolute -top-[28px]">
+                {user && user.avatar ? (
+                  <img
+                    src={user.avatar.imageUrl}
+                    alt={user.avatar.title}
+                    className="h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <img
+                    src={avatar}
+                    alt="avatar"
+                    className="h-full object-cover rounded-full"
+                  />
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={handleFileChange}
               />
-            </div>
+
+              {!edit && (
+                <>
+                  <div className="relative!">
+                    <button
+                      type="button"
+                      className="w-auto h-[35px] flex items-center justify-center px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+                      onClick={handleButtonClick}
+                    >
+                      {file ? 'Cambiar selección' : 'Seleccionar imagen'}
+                    </button>
+                    {file && (
+                      <p className="text-xs text-[#44444480] ps-[10px]! absolute left-full top-1/2 -translate-y-1/2">
+                        Archivo seleccionado:{' '}
+                        <span className="font-semibold">{file.name}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={!file || status.uploadAvatar == 'loading'}
+                    className="w-auto h-[35px] flex items-center justify-center mt-[10px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+                  >
+                    {status.uploadAvatar == 'loading'
+                      ? 'Subiendo archivo...'
+                      : 'Guardar cambios'}
+                  </button>
+                </>
+              )}
+            </form>
 
             <button
-              className="w-auto h-[35px] flex items-center justify-center mt-[128px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all"
+              className={`w-auto h-[35px] flex items-center justify-center mt-[10px]! px-[24px]! py-[5px]! border border-[#44444426] rounded-[16px] text-[#44444480] font-bold cursor-pointer hover:bg-[#88888826] transition-all ${!edit && "bg-[#88888826]"}`}
               onClick={() => {
                 setEdit(!edit);
               }}
+              type="button"
             >
               Editar{' '}
               <TbEditCircle size={18} color="#44444490" className="ms-[9px]!" />
             </button>
+
             {user && <ProfileForm user={user} edit={edit} roles={roles} />}
           </div>
         </div>
@@ -157,7 +268,7 @@ const ProfileForm = ({
   return (
     <>
       <form
-        className="w-[calc(100%-40px)] mt-[100px]! flex flex-col items-start justify-center pb-[87px]! md:hidden relative"
+        className="w-[calc(100%-40px)] mt-[100px]! flex flex-col items-start justify-center pb-[87px]! z-30 md:hidden relative"
         onSubmit={handleSubmit}
       >
         {status.updateUser === 'failed' && (

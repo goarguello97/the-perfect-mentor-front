@@ -28,6 +28,7 @@ export interface User {
   isComplete: boolean;
   skills: string[];
   recoveryToken: string;
+  avatar: any;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +52,7 @@ interface AuthStatus {
   passwordRecovery: RequestStatus;
   updatePassword: RequestStatus;
   updateUser: RequestStatus;
+  uploadAvatar: RequestStatus;
 }
 
 interface AuthErrors {
@@ -61,6 +63,7 @@ interface AuthErrors {
   passwordRecovery: string | null;
   updatePassword: string | null;
   updateUser: string | null;
+  uploadAvatar: string | null;
 }
 
 interface AuthState {
@@ -85,6 +88,7 @@ const initialState: AuthState = {
     passwordRecovery: 'idle',
     updatePassword: 'idle',
     updateUser: 'idle',
+    uploadAvatar: 'idle',
   },
   errors: {
     login: null,
@@ -94,6 +98,7 @@ const initialState: AuthState = {
     passwordRecovery: null,
     updatePassword: null,
     updateUser: null,
+    uploadAvatar: null,
   },
 };
 
@@ -328,6 +333,24 @@ export const updateUser = createAsyncThunk(
   },
 );
 
+export const uploadAvatar = createAsyncThunk(
+  'auth/addAvatar',
+  async (data: FormData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.patch('/users/add/avatar', data);
+
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        (firebaseErrorSpa.hasOwnProperty(error.response.data.code) &&
+          (firebaseErrorSpa[error.response.data.code] as string)) ||
+        error.response?.data ||
+        error.message;
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -456,7 +479,20 @@ const authSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.status.updateUser = 'failed';
-        state.errors.updateUser = action.payload as any;
+        state.errors.updateUser = action.payload as string;
+      })
+      .addCase(uploadAvatar.pending, (state) => {
+        state.status.uploadAvatar = 'loading';
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.status.uploadAvatar = 'succeeded';
+        if (state.user) {
+          state.user.avatar = action.payload.avatar;
+        }
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
+        state.status.uploadAvatar = 'failed';
+        state.errors.uploadAvatar = action.payload as string;
       });
   },
 });
