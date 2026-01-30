@@ -4,28 +4,61 @@ import { auth } from '../../firebase/firebase';
 
 type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
+interface ReportMessage {
+  _id: string;
+  reportId: any;
+  authorId: any;
+  content: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+interface Report {
+  _id: string;
+  senderId: any;
+  receiverId: any;
+  subject: string;
+  status: boolean;
+  lastMessageAt: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: ReportMessage[];
+}
+
 interface ReportErrors {
   reports: string | null;
   report: string | null;
   reponseReport: string | null;
+  reportMessage: string | null;
 }
 
 interface ReportStatus {
   reports: RequestStatus;
   report: RequestStatus;
   responseReport: RequestStatus;
+  reportMessage: RequestStatus;
 }
 
 interface ReportState {
   errors: ReportErrors;
   status: ReportStatus;
-  reports: any[];
-  report: any | null;
+  reports: Report[];
+  report: Report | null;
 }
 
 const initialState: ReportState = {
-  errors: { report: null, reports: null, reponseReport: null },
-  status: { report: 'idle', reports: 'idle', responseReport: 'idle' },
+  errors: {
+    report: null,
+    reports: null,
+    reponseReport: null,
+    reportMessage: null,
+  },
+  status: {
+    report: 'idle',
+    reports: 'idle',
+    responseReport: 'idle',
+    reportMessage: 'idle',
+  },
   report: null,
   reports: [],
 };
@@ -146,6 +179,24 @@ export const answerReport = createAsyncThunk(
   },
 );
 
+export const addReportMessage = createAsyncThunk(
+  'reports/addReportMessage',
+  async (
+    data: { authorId: string; reportId: string; content: string },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await axiosInstance.post('/reports/message', data);
+
+      return response.data;
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || error.message || 'Error al enviar un mensaje';
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  },
+);
+
 const reportSlice = createSlice({
   name: 'report',
   initialState,
@@ -201,11 +252,26 @@ const reportSlice = createSlice({
       })
       .addCase(answerReport.fulfilled, (state, action) => {
         state.status.responseReport = 'succeeded';
-        state.report = action.payload;
+        if (state.report) {
+          state.report.status = action.payload.status;
+        }
       })
       .addCase(answerReport.rejected, (state, action) => {
         state.errors.reponseReport = action.payload as string;
         state.status.report = 'failed';
+      })
+      .addCase(addReportMessage.pending, (state) => {
+        state.status.reportMessage = 'loading';
+      })
+      .addCase(addReportMessage.fulfilled, (state, action) => {
+        state.status.responseReport = 'succeeded';
+        if (state.report) {
+          state.report.messages.push(action.payload);
+        }
+      })
+      .addCase(addReportMessage.rejected, (state, action) => {
+        state.errors.reportMessage = action.payload as string;
+        state.status.reportMessage = 'failed';
       }),
 });
 

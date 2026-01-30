@@ -151,7 +151,17 @@ export const validationCompleteUserData = (values: any) => {
 export const chatValidation = (values: any) => {
   const errors: any = {};
 
-  if (values.content < 1) {
+  if (values.content.length < 1) {
+    errors.content = 'El mensaje no puede estar en blanco';
+  }
+
+  return errors;
+};
+
+export const reportMessageValidation = (values: any) => {
+  const errors: any = {};
+
+  if (values.content.length < 1) {
     errors.content = 'El mensaje no puede estar en blanco';
   }
 
@@ -161,7 +171,11 @@ export const chatValidation = (values: any) => {
 export const reportValidation = (values: any) => {
   const errors: any = {};
 
-  if (values.content < 1) {
+  if (values.subject.length < 1) {
+    errors.subject = 'El aunto no puede estar en blanco';
+  }
+
+  if (values.content.length < 1) {
     errors.content = 'El mensaje no puede estar en blanco';
   }
 
