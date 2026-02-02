@@ -307,17 +307,13 @@ export const updateUser = createAsyncThunk(
       if (response.data.customToken) {
         const { signInWithCustomToken } = await import('firebase/auth');
 
-        // Esto "limpia" la sesión rota y pone una nueva basada en el UID
-        // sin que el usuario tenga que poner su clave.
         const userCredential = await signInWithCustomToken(
           auth,
           response.data.customToken,
         );
 
-        // Ahora que la sesión es nueva, obtenemos el token real
         const newToken = await userCredential.user.getIdToken();
 
-        // Actualizamos nuestro estado global
         thunkAPI.dispatch(validationUser(newToken));
       }
 
