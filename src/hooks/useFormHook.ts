@@ -52,7 +52,6 @@ const useForm = (initialValues: any, submit: any, validations: any) => {
     values,
     formErrors,
     setValues,
-    handleReset,
   };
 };
 

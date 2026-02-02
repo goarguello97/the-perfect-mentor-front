@@ -30,7 +30,7 @@ const ReportsPage = () => {
   const [mobilePage, setMobilePage] = useState(1);
   const loaderRef = useRef<HTMLDivElement>(null);
 
-  const { handleChange, handleReset, values } = useForm(
+  const { handleChange, values } = useForm(
     SEARCH_PASS_INITIAL_VALUES,
     getReports,
     validationSearch,
@@ -313,7 +313,7 @@ const ReportsPage = () => {
                         (report.senderId._id === user?._id && (
                           <div
                             key={i}
-                            className={`h-[60px] ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} grid grid-cols-6 items-center relative`}
+                            className={`min-h-[60px] max-h-[75px] flex-1 ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} grid grid-cols-6 items-center relative`}
                           >
                             <div className="text-[14px] font-normal text-[#444444] text-center relative">
                               <div
