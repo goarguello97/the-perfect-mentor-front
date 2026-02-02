@@ -1,6 +1,6 @@
 import maskGroup from '@assets/Mask group.svg';
 import doodle from '@assets/doodle-4 1.svg';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaRegDotCircle } from 'react-icons/fa';
 import { GoDot } from 'react-icons/go';
 import { GrView } from 'react-icons/gr';
@@ -9,12 +9,34 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import ReporModal from '../components/ReportModal';
 import { getReports } from '../features/reports/reportSlice';
+import { SEARCH_PASS_INITIAL_VALUES } from '../constants';
+import useForm from '../hooks/useFormHook';
+import { validationSearch } from '../helpers/validations';
+import useDebounce from '../hooks/useDebounceHook';
+
+interface FilterState {
+  search: string;
+  verify: boolean;
+  age: boolean;
+  page: string;
+}
 
 const ReportsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
-  const { reports } = useAppSelector((state) => state.report);
+  const { reports, status } = useAppSelector((state) => state.report);
   const dispatch = useAppDispatch();
+
+  const [mobilePage, setMobilePage] = useState(1);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  const { handleChange, handleReset, values } = useForm(
+    SEARCH_PASS_INITIAL_VALUES,
+    getReports,
+    validationSearch,
+  );
+
+  const debouncedValues = useDebounce<FilterState>(values, 500);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -40,9 +62,62 @@ const ReportsPage = () => {
     return `${month} ${day}, ${year}`;
   };
 
+  const fetchNextPage = useCallback(() => {
+    if (
+      mobilePage < (reports.totalPages || 0) &&
+      status.reports !== 'loading'
+    ) {
+      const nextPage = mobilePage + 1;
+      setMobilePage(nextPage);
+
+      const params = new URLSearchParams({
+        ...(debouncedValues as any),
+        page: nextPage.toString(),
+        limit: '6',
+        isScrolling: 'true',
+      }).toString();
+
+      dispatch(getReports({ params }));
+    }
+  }, [
+    mobilePage,
+    reports.totalPages,
+    status.reports,
+    debouncedValues,
+    dispatch,
+  ]);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage !== reports.page) {
+      const params = new URLSearchParams({
+        ...debouncedValues,
+        page: newPage.toString(),
+      } as any).toString();
+
+      dispatch(getReports({ params }));
+    }
+  };
+
   useEffect(() => {
-    if (user) dispatch(getReports());
-  }, [dispatch, user]);
+    const queryString = new URLSearchParams(debouncedValues as any).toString();
+    if (user) setMobilePage(1);
+    dispatch(getReports({ params: queryString }));
+  }, [dispatch, user?._id, debouncedValues]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [fetchNextPage]);
+
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden">
@@ -66,8 +141,14 @@ const ReportsPage = () => {
             />
             <input
               type="text"
+              name="search"
+              value={values.search}
+              onChange={handleChange}
               className="w-full h-full text-[14px] text-[#444444] bg-[#FFFFFF] rounded-[25px] pl-[49px]!"
-              placeholder="buscar por id"
+              placeholder="buscar por nombre"
+              minLength={1}
+              maxLength={30}
+              required
             />
           </div>
         </header>
@@ -75,7 +156,7 @@ const ReportsPage = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
-        <div className="w-[calc(100%-20px)] mx-[10px] mt-[35px]! pt-[20px]! flex-1 bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col items-center justify-start gap-[5px]">
+        <div className="w-[calc(100%-20px)] mx-[10px] mt-[35px]! pt-[20px]! pb-[92px]! flex-1 bg-[#FFFFFF] rounded-t-[40px] shadow-[0px_4px_4px_0px_#4444444D] flex flex-col items-center justify-start gap-[5px]">
           <button
             onClick={() => setIsModalOpen(true)}
             className="h-[55px]! rounded-[40px] text-[15px] leading-[55px] text-center font-bold border border-[#44444426] text-[#44444480] px-[10px]! mb-[15px]!"
@@ -83,9 +164,10 @@ const ReportsPage = () => {
             Nuevo Reporte
           </button>
 
-          {reports?.map(
+          {reports?.reports.map(
             (report, i) =>
-              report.receiverId._id === user?._id && (
+              report.receiverId._id === user?._id ||
+              (report.senderId._id === user?._id && (
                 <div
                   key={i}
                   className={`w-[calc(100%-40px)] h-[119px] ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} rounded-[20px] relative flex flex-col items-start justify-center p-[15px]!`}
@@ -129,8 +211,23 @@ const ReportsPage = () => {
                     {formatDate(report.createdAt)}
                   </p>
                 </div>
-              ),
+              )),
           )}
+
+          <div
+            ref={loaderRef}
+            className="w-full h-10 flex items-center justify-center mt-4!"
+          >
+            {mobilePage < (reports.totalPages || 0) ? (
+              <span className="text-[12px] text-gray-400 animate-pulse">
+                Cargando más usuarios...
+              </span>
+            ) : (
+              <span className="text-[12px] text-gray-300 italic">
+                Fin de la lista
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -165,8 +262,13 @@ const ReportsPage = () => {
                   />
                   <input
                     type="text"
+                    name="search"
+                    value={values.search}
+                    onChange={handleChange}
                     className="w-full h-full text-[14px] text-[#444444] bg-[#FFFFFF] rounded-[25px] pl-[49px]!"
                     placeholder="buscar usuarios"
+                    minLength={1}
+                    maxLength={30}
                   />
                 </div>
                 <button
@@ -205,9 +307,10 @@ const ReportsPage = () => {
                   </div>
 
                   <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[6px]">
-                    {reports?.map(
+                    {reports?.reports.map(
                       (report, i) =>
-                        report.receiverId._id === user?._id && (
+                        report.receiverId._id === user?._id ||
+                        (report.senderId._id === user?._id && (
                           <div
                             key={i}
                             className={`h-[60px] ${report.status ? 'bg-[#39B54A1A]' : 'bg-[#E615871A]'} grid grid-cols-6 items-center relative`}
@@ -258,19 +361,38 @@ const ReportsPage = () => {
                               <GrView size={32} />
                             </Link>
                           </div>
-                        ),
+                        )),
                     )}
                   </div>
 
                   <div className="bg-[#F5F6F7] h-[40px] grid grid-cols-7 items-center">
                     <div className="text-[#44444480] text-[14px] text-center">
-                      Página 1 / 2
+                      Página {reports.page} / {reports.totalPages}
                     </div>
                   </div>
                 </div>
                 <div className="h-[40px]! flex justify-end items-center me-[45px]! mt-[10px]!">
-                  <FaRegDotCircle color="#444444" size={16} />
-                  <GoDot color="#D9D9D9" size={16} />
+                  {Array.from({ length: reports.totalPages ?? 0 }).map(
+                    (_, i) => {
+                      const pageNumber = i + 1;
+                      const isActive = pageNumber === reports.page;
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => handlePageChange(pageNumber)}
+                          className="cursor-pointer hover:scale-125 transition-transform"
+                          title={`Ir a la página ${pageNumber}`}
+                        >
+                          {isActive ? (
+                            <FaRegDotCircle key={i} color="#444444" size={16} />
+                          ) : (
+                            <GoDot key={i} color="#D9D9D9" size={16} />
+                          )}
+                        </button>
+                      );
+                    },
+                  )}
                 </div>
               </div>
             </div>
