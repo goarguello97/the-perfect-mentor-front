@@ -25,6 +25,14 @@ interface Report {
   messages: ReportMessage[];
 }
 
+interface ReportData {
+  reports: Report[];
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+}
+
 interface ReportErrors {
   reports: string | null;
   report: string | null;
@@ -42,7 +50,7 @@ interface ReportStatus {
 interface ReportState {
   errors: ReportErrors;
   status: ReportStatus;
-  reports: Report[];
+  reports: ReportData;
   report: Report | null;
 }
 
@@ -60,13 +68,20 @@ const initialState: ReportState = {
     reportMessage: 'idle',
   },
   report: null,
-  reports: [],
+  reports: {
+    reports: [],
+    page: 1,
+    perPage: 7,
+    total: 0,
+    totalPages: 0,
+  },
 };
 
 export const getReports = createAsyncThunk(
   'reports/getReports',
-  async (_, thunkAPI) => {
+  async (data: { params: string | undefined }, thunkAPI) => {
     try {
+      const { params } = data;
       const user = auth.currentUser;
 
       if (!user) throw new Error('Usuario no autenticado');
@@ -77,7 +92,7 @@ export const getReports = createAsyncThunk(
         throw new Error('No hay token de autenticación disponible');
       }
 
-      const response = await axiosInstance.get(`/reports/${token}`);
+      const response = await axiosInstance.get(`/reports/${token}?${params}`);
 
       return response.data;
     } catch (error: any) {
@@ -200,7 +215,11 @@ export const addReportMessage = createAsyncThunk(
 const reportSlice = createSlice({
   name: 'report',
   initialState,
-  reducers: {},
+  reducers: {
+    resetReportStatus: (state) => {
+      state.status.report = 'idle';
+    },
+  },
   extraReducers: (builder) =>
     builder
       .addCase(getReports.pending, (state) => {
@@ -208,7 +227,21 @@ const reportSlice = createSlice({
       })
       .addCase(getReports.fulfilled, (state, action) => {
         state.status.reports = 'succeeded';
-        state.reports = action.payload;
+        const { reports, isScrolling } = action.payload;
+
+        if (isScrolling) {
+          const existingIds = new Set(state.reports.reports?.map((u) => u._id));
+          const newReports = reports.filter(
+            (u: any) => !existingIds.has(u._id),
+          );
+
+          state.reports.reports = [
+            ...(state.reports.reports || []),
+            ...newReports,
+          ];
+        } else {
+          state.reports = action.payload;
+        }
       })
       .addCase(getReports.rejected, (state, action) => {
         state.status.reports = 'failed';
@@ -275,4 +308,5 @@ const reportSlice = createSlice({
       }),
 });
 
+export const { resetReportStatus } = reportSlice.actions;
 export default reportSlice.reducer;

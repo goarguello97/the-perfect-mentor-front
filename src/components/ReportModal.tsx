@@ -1,16 +1,21 @@
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { REPORT_INITIAL_VALUES } from '../constants';
 import { getMatches } from '../features/match/matchSlice';
-import { addReport } from '../features/reports/reportSlice';
+import {
+  addReport,
+  getReports,
+  resetReportStatus,
+} from '../features/reports/reportSlice';
 import { reportValidation } from '../helpers/validations';
 import useForm from '../hooks/useFormHook';
 
 const ReporModal = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const { errors, status, matches } = useAppSelector((state) => state.matches);
+  const { status, matches } = useAppSelector((state) => state.matches);
+  const reports = useAppSelector((state) => state.report);
 
-  const { formErrors, handleSubmit, values, handleChange } = useForm(
+  const { formErrors, handleSubmit, values, handleChange, setValues } = useForm(
     REPORT_INITIAL_VALUES,
     addReport,
     reportValidation,
@@ -20,11 +25,19 @@ const ReporModal = ({ isOpen, onClose }) => {
     dispatch(getMatches());
   }, [isOpen, dispatch]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (reports.status.report === 'succeeded') {
+      dispatch(getReports());
+      dispatch(resetReportStatus());
+      setValues(REPORT_INITIAL_VALUES);
+      onClose();
+    }
+  }, [reports.status.report, dispatch, onClose]);
 
+  if (!isOpen) return null;
   return (
     <>
-      <div className="flex w-[100dvw] h-[100dvh] flex-col items-center justify-center md:hidden fixed inset-0 z-20 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 backdrop-blur-sm z-50">
+      <div className="flex w-dvw h-dvh flex-col items-center justify-center md:hidden fixed inset-0 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 backdrop-blur-sm z-50">
         <div className="bg-[#FFFFFF] w-[calc(100%-20px)] h-[90%] rounded-[40px] shadow-xl overflow-hidden px-[20px]! flex flex-col">
           <div className="w-full h-[55px] border-b border-gray-200 flex justify-between items-center px-[5px]!">
             <h3 className="text-[20px] font-semibold text-[#444444]">
@@ -55,16 +68,40 @@ const ReporModal = ({ isOpen, onClose }) => {
           >
             <label className="text-[15px] text-[#3A3D46] w-[calc(100%-10px)] mb-[10px]!">
               Destinatario: <br />
-              <select
-                name="user"
-                id=""
-                className="font-bold text-[15px] text-[#444444] bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] w-full  h-[30px] mt-[5px]! px-[20px]"
-              ></select>
+              {status.matches === 'loading' ? (
+                <>
+                  <p>Cargando...</p>
+                </>
+              ) : (
+                <select
+                  name="receiverId"
+                  value={values.receiverId}
+                  onChange={handleChange}
+                  className="font-bold text-[15px] text-[#444444] bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] w-full  h-[30px] mt-[5px]! px-[20px]"
+                  required
+                >
+                  <option className="font-bold text-[15px] text-[#444444] w-full my-[5px]!">
+                    Selecciona un destinatario
+                  </option>
+                  {matches?.map((match, i) => (
+                    <option
+                      key={i}
+                      value={match._id}
+                      className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
+                    >
+                      {match.fullname}
+                    </option>
+                  ))}
+                </select>
+              )}
             </label>
             <label className="text-[15px] text-[#3A3D46] w-[calc(100%-10px)] mb-[10px]!">
               Asunto: <br />
               <input
                 type="text"
+                name="subject"
+                value={values.subject}
+                onChange={handleChange}
                 className="w-full h-[30px] bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] px-[20px]!"
               />
             </label>
@@ -72,8 +109,9 @@ const ReporModal = ({ isOpen, onClose }) => {
               Descripción:{' '}
             </label>
             <textarea
-              name=""
-              id=""
+              name="content"
+              value={values.content}
+              onChange={handleChange}
               className="w-[calc(100%-10px)] h-full bg-[#FFFFFF] border-2 border-[#444444] rounded-[20px] mb-[20px]! py-[10px]! px-[20px]!"
             ></textarea>
 
@@ -81,13 +119,13 @@ const ReporModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="border-2 border-[#444444] hover:bg-[#44444470]  rounded-full px-[20px]! h-[55px] text-[#444444] font-bold text-[15px] px-4 flex items-center justify-center cursor-pointer"
+                className="border-2 border-[#444444] hover:bg-[#44444470]  rounded-full px-[20px]! h-[55px] text-[#444444] font-bold text-[15px] flex items-center justify-center cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 px-4 flex items-center justify-center cursor-pointer"
+                className="bg-[#444444] hover:bg-[#666666] rounded-full px-[20px]! h-[55px] text-white font-bold text-[15px] mb-[10px]! z-10 flex items-center justify-center cursor-pointer"
               >
                 Enviar Reporte
               </button>
@@ -129,7 +167,9 @@ const ReporModal = ({ isOpen, onClose }) => {
             <label className="text-[15px] text-[#3A3D46] w-[calc(100%-10px)] mb-[10px]!">
               Destinatario: <br />
               {status.matches === 'loading' ? (
-                <>Cargando...</>
+                <>
+                  <p>Cargando...</p>
+                </>
               ) : (
                 <select
                   name="receiverId"
@@ -139,7 +179,7 @@ const ReporModal = ({ isOpen, onClose }) => {
                   required
                 >
                   <option className="font-bold text-[15px] text-[#444444] w-full my-[5px]!">
-                    Seleccione una opción
+                    Seleccione un destinatario
                   </option>
                   {matches?.map((match, i) => (
                     <option
@@ -147,8 +187,7 @@ const ReporModal = ({ isOpen, onClose }) => {
                       value={match._id}
                       className="font-bold text-[15px] text-[#444444] w-full my-[5px]!"
                     >
-                      {match.fullname.charAt(0).toUpperCase() +
-                        match.fullname.slice(1).toLowerCase()}
+                      {match.fullname}
                     </option>
                   ))}
                 </select>
