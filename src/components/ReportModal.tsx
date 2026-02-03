@@ -27,8 +27,6 @@ const ReporModal = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (reports.status.report === 'succeeded') {
-      dispatch(getReports());
-      dispatch(resetReportStatus());
       setValues(REPORT_INITIAL_VALUES);
       onClose();
     }
