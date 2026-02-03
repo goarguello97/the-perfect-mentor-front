@@ -189,7 +189,8 @@ export const validationUser = createAsyncThunk(
         (error?.message !== 'TOKEN_EXPIRED' &&
           error.response?.status === 401) ||
         (error?.message === 'Request failed with status code 404' &&
-          error?.status === 404)
+          error?.status === 404) ||
+        error.code === 'ERR_NETWORK'
       ) {
         await signOut(auth);
       }
@@ -197,7 +198,8 @@ export const validationUser = createAsyncThunk(
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
           firebaseErrorSpa[error.code]) ||
-        error.response?.data;
+        error.response?.data ||
+        (error.code === 'ERR_NETWORK' && 'Error de red, intente nuevamente');
       return thunkAPI.rejectWithValue(errorMessage);
     }
   },
