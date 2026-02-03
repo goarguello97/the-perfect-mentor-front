@@ -106,20 +106,22 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async ({ username, email, password }: Register, thunkAPI) => {
     try {
-      const firebaseUser = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
+      // const firebaseUser = await createUserWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password,
+      // );
 
-      if (!firebaseUser.user) {
-        throw new Error('Error al crear el usuario.');
-      }
+      // if (!firebaseUser.user) {
+      //   throw new Error('Error al crear el usuario.');
+      // }
 
-      const user = firebaseUser.user;
+      // const user = firebaseUser.user;
+
+      // await signOut(auth);
 
       const response = await axiosInstance.post(`/users/`, {
-        id: user.uid,
+        password,
         username,
         email,
       });
@@ -154,12 +156,12 @@ export const loginUser = createAsyncThunk(
       const response = await axiosInstance.get(`/users/${user.uid}`);
 
       if (!response.data.verify) {
-        await signOut(auth);
-        throw new Error('Debes activar tu usuario.');
+        throw new Error('Debes activar tu usuario');
       }
 
       return response.data;
     } catch (error: any) {
+      await signOut(auth);
       const errorMessage =
         (firebaseErrorSpa.hasOwnProperty(error.code) &&
           firebaseErrorSpa[error.code]) ||
@@ -184,8 +186,10 @@ export const validationUser = createAsyncThunk(
       };
     } catch (error: any) {
       if (
-        error?.message !== 'TOKEN_EXPIRED' &&
-        error.response?.status === 401
+        (error?.message !== 'TOKEN_EXPIRED' &&
+          error.response?.status === 401) ||
+        (error?.message === 'Request failed with status code 404' &&
+          error?.status === 404)
       ) {
         await signOut(auth);
       }

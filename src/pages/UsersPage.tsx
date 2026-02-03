@@ -267,7 +267,6 @@ const UsersPage = () => {
     matches.matches,
     matches.matchesReq,
   ]);
-console.log(values)
   return (
     <>
       <div className="flex w-full h-full flex-col items-center md:hidden">
@@ -519,7 +518,7 @@ console.log(values)
                   <div className="w-full max-w-[400px] h-[55px] bg-[#FFFFFF] flex items-center justify-center shadow-[0px_4px_4px_0px_#4444444D] rounded-[40px] p-[7px]! ms-[20px]! z-30">
                     <button
                       type="button"
-                      onClick={()=> setValues(SEARCH_PASS_INITIAL_VALUES)}
+                      onClick={() => setValues(SEARCH_PASS_INITIAL_VALUES)}
                       className="w-[150px] h-[40px] rounded-[40px] border border-[#44444426] text-[#44444480] font-bold cursor-pointer"
                     >
                       Limpiar filtros

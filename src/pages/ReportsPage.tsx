@@ -8,7 +8,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import ReporModal from '../components/ReportModal';
-import { getReports } from '../features/reports/reportSlice';
+import { getReports, resetReportStatus } from '../features/reports/reportSlice';
 import { SEARCH_PASS_INITIAL_VALUES } from '../constants';
 import useForm from '../hooks/useFormHook';
 import { validationSearch } from '../helpers/validations';
@@ -24,7 +24,7 @@ interface FilterState {
 const ReportsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
-  const { reports, status } = useAppSelector((state) => state.report);
+  const { reports, report, status } = useAppSelector((state) => state.report);
   const dispatch = useAppDispatch();
 
   const [mobilePage, setMobilePage] = useState(1);
@@ -97,6 +97,14 @@ const ReportsPage = () => {
       dispatch(getReports({ params }));
     }
   };
+
+  useEffect(() => {
+    const queryString = new URLSearchParams(debouncedValues as any).toString();
+    if (status.report == 'succeeded') {
+      dispatch(getReports({ params: queryString }));
+      dispatch(resetReportStatus());
+    }
+  }, [dispatch, status.report]);
 
   useEffect(() => {
     const queryString = new URLSearchParams(debouncedValues as any).toString();
