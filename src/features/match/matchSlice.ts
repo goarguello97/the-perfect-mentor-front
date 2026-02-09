@@ -63,15 +63,11 @@ const initialState: MatchState = {
 };
 
 export const getMatches = createAsyncThunk(
-  'matches/getMatchs',
-  async (_, thunkAPI) => {
+  'matches/getMatches',
+  async (data: { id: string }, thunkAPI) => {
     try {
-      const user = auth.currentUser;
-
-      if (!user) throw new Error('Usuario no identificado');
-
-      const token = await user.getIdToken();
-      const response = await axiosInstance.get(`/matches/${token}`);
+      const { id } = data;
+      const response = await axiosInstance.get(`/matches/${id}`);
 
       return response.data;
     } catch (error: any) {
@@ -86,14 +82,12 @@ export const getMatches = createAsyncThunk(
 
 export const getMatchesReq = createAsyncThunk(
   'matches/getMatchesReq',
-  async (_, thunkAPI) => {
+  async (data: { id: string }, thunkAPI) => {
     try {
-      const user = auth.currentUser;
+      const { id } = data;
 
-      if (!user) throw new Error('Usuario no identificado');
+      const response = await axiosInstance.get(`/matches/req/${id}`);
 
-      const token = await user.getIdToken();
-      const response = await axiosInstance.get(`/matches/req/${token}`);
       return response.data;
     } catch (error: any) {
       const errorMessage =

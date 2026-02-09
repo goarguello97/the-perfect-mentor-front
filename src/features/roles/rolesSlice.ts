@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../config/axiosInstance';
+import { auth } from '../../firebase/firebase';
 
 type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
@@ -31,18 +32,18 @@ export const getRoles = createAsyncThunk(
   'roles/getRoles',
   async (_, thunkAPI) => {
     try {
-      // const user = auth.currentUser;
+      const user = auth.currentUser;
 
-      // if (!user) throw new Error("Usuario no autenticado");
+      if (!user) throw new Error('Usuario no autenticado');
 
-      // const token = user.getIdToken();
+      const token = user.getIdToken();
 
-      // if (!token) {
-      //   throw new Error("No hay token de autenticación disponible");
-      // }
+      if (!token) {
+        throw new Error('No hay token de autenticación disponible');
+      }
 
       const response = await axiosInstance.get('/roles', {
-        //   headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data;

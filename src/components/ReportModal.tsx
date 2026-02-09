@@ -2,27 +2,26 @@ import { use, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { REPORT_INITIAL_VALUES } from '../constants';
 import { getMatches } from '../features/match/matchSlice';
-import {
-  addReport,
-  getReports,
-  resetReportStatus,
-} from '../features/reports/reportSlice';
+import { addReport } from '../features/reports/reportSlice';
 import { reportValidation } from '../helpers/validations';
 import useForm from '../hooks/useFormHook';
 
-const ReporModal = ({ isOpen, onClose }) => {
+const ReporModal = ({ isOpen, onClose }:{isOpen:boolean; onClose: ()=>void; }) => {
   const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
   const { status, matches } = useAppSelector((state) => state.matches);
   const reports = useAppSelector((state) => state.report);
 
-  const { formErrors, handleSubmit, values, handleChange, setValues } = useForm(
+  const { handleSubmit, values, handleChange, setValues } = useForm(
     REPORT_INITIAL_VALUES,
     addReport,
     reportValidation,
   );
 
   useEffect(() => {
-    dispatch(getMatches());
+    if (auth.user) {
+      dispatch(getMatches({ id: auth.user._id }));
+    }
   }, [isOpen, dispatch]);
 
   useEffect(() => {
