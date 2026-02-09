@@ -79,9 +79,9 @@ const initialState: ReportState = {
 
 export const getReports = createAsyncThunk(
   'reports/getReports',
-  async (data: { params: string | undefined }, thunkAPI) => {
+  async (data: { id: string; params: string | undefined }, thunkAPI) => {
     try {
-      const { params } = data;
+      const { params, id } = data;
       const user = auth.currentUser;
 
       if (!user) throw new Error('Usuario no autenticado');
@@ -92,7 +92,9 @@ export const getReports = createAsyncThunk(
         throw new Error('No hay token de autenticación disponible');
       }
 
-      const response = await axiosInstance.get(`/reports/${token}?${params}`);
+      const response = await axiosInstance.get(`/reports/${id}?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       return response.data;
     } catch (error: any) {

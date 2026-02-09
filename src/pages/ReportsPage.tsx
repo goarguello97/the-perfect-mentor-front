@@ -76,8 +76,9 @@ const ReportsPage = () => {
         limit: '6',
         isScrolling: 'true',
       }).toString();
-
-      dispatch(getReports({ params }));
+      if (user) {
+        dispatch(getReports({ id: user._id, params }));
+      }
     }
   }, [
     mobilePage,
@@ -94,22 +95,29 @@ const ReportsPage = () => {
         page: newPage.toString(),
       } as any).toString();
 
-      dispatch(getReports({ params }));
+      if (user) {
+        dispatch(getReports({ id: user._id, params }));
+      }
     }
   };
 
   useEffect(() => {
     const queryString = new URLSearchParams(debouncedValues as any).toString();
     if (status.report == 'succeeded') {
-      dispatch(getReports({ params: queryString }));
+      if (user) {
+        dispatch(getReports({ id: user._id, params: queryString }));
+      }
       dispatch(resetReportStatus());
     }
   }, [dispatch, status.report]);
 
   useEffect(() => {
     const queryString = new URLSearchParams(debouncedValues as any).toString();
-    if (user) setMobilePage(1);
-    dispatch(getReports({ params: queryString }));
+    if (user) {
+      setMobilePage(1);
+
+      dispatch(getReports({ id: user._id, params: queryString }));
+    }
   }, [dispatch, user?._id, debouncedValues]);
 
   useEffect(() => {

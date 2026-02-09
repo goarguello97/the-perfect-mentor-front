@@ -122,9 +122,10 @@ const UsersPage = () => {
     const isMobile = window.innerWidth < 768;
     try {
       await dispatch(match({ senderId: auth.user!._id, receiverId })).unwrap();
-
-      dispatch(getMatches());
-      dispatch(getMatchesReq());
+      if (auth.user) {
+        dispatch(getMatches({ id: auth.user._id }));
+        dispatch(getMatchesReq({ id: auth.user._id }));
+      }
 
       Swal.fire({
         position: isMobile ? 'center' : 'top-end',
@@ -158,8 +159,10 @@ const UsersPage = () => {
         }),
       ).unwrap();
 
-      dispatch(getMatches());
-      dispatch(getMatchesReq());
+      if (auth.user) {
+        dispatch(getMatches({ id: auth.user._id }));
+        dispatch(getMatchesReq({ id: auth.user._id }));
+      }
 
       Swal.fire({
         position: isMobile ? 'center' : 'top-end',
@@ -193,8 +196,10 @@ const UsersPage = () => {
         }),
       ).unwrap();
 
-      dispatch(getMatches());
-      dispatch(getMatchesReq());
+      if (auth.user) {
+        dispatch(getMatches({ id: auth.user._id }));
+        dispatch(getMatchesReq({ id: auth.user._id }));
+      }
 
       Swal.fire({
         position: isMobile ? 'center' : 'top-end',
@@ -257,8 +262,10 @@ const UsersPage = () => {
 
   useEffect(() => {
     if (!matches.matches) {
-      dispatch(getMatches());
-      dispatch(getMatchesReq());
+      if (auth.user) {
+        dispatch(getMatches({ id: auth.user._id }));
+        dispatch(getMatchesReq({ id: auth.user._id }));
+      }
     }
   }, [
     matches.status.matches,
